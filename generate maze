@@ -1,0 +1,4 @@
+def maze:
+  maz = Maze(101, 101)
+  grid=maz.generate_maze()
+  return grid
