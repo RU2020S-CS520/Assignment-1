@@ -51,8 +51,11 @@ class Maze:
                 row_cur, col_cur = unvisited_cells.pop()
                 visited_cells.append((row_cur, col_cur))
                 self.grid[row_cur][col_cur].visited=True
+        data = [[self.grid[i][j].blocked for j in range(self.num_cols)] for i in range(self.num_rows)]
 
-        return self.grid
+        return data
+
+        
 
     def vis_maze(self, grid):  # visualize the maze
         # create discrete colormap
@@ -89,8 +92,4 @@ class Maze:
             return None
 
 
-maz = Maze(101, 101)
-grid=maz.generate_maze()
-data = [[grid[i][j].blocked for j in range(101)] for i in range(101)]
-print(data)
-maz.vis_maze(grid)
+
