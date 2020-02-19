@@ -52,7 +52,12 @@ class Maze:
                 visited_cells.append((row_cur, col_cur))
                 self.grid[row_cur][col_cur].visited=True
 
-        return self.grid
+            maze = np.zeros((self.num_rows, self.num_cols))
+            for col in range(self.num_cols):
+                for row in range(self.num_cols):
+                    if self.grid[row_cur][col_cur].blocked == 1:
+                        maze[col, row] = 1;
+        return maze
 
     def vis_maze(self, grid):  # visualize the maze
         # create discrete colormap
