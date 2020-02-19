@@ -2,4 +2,6 @@ import numpy as np
 
 if __name__ == '__main__':
 
-    start = np.random.
+    #build the maze
+
+
