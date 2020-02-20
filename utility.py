@@ -1,6 +1,25 @@
 from queue import PriorityQueue as pq
 
+class PriorityQueue:
+
+    def __init__(self, mode = 0):
+        self.queue = pq()
+        self.mode = mode
+
+    def put(self, h_cost, g_cost, data):
+        if self.mode == 0:
+            self.queue.put(((h_cost + g_cost, g_cost), data))
+        elif self.mode == 1:
+            self.queue.put(((h_cost + g_cost, -g_cost), data))
+        return
+
+    def get(self):
+        return self.queue.get()[1]
+
+
+
 if __name__ == '__main__':
-    ppq = pq()
-    ppq.put((3, 5), 5)
-    print(ppq.get()[1]);
+    ppq = PriorityQueue(1)
+    ppq.put(3, 4, 5)
+    ppq.put(3, 5, 6)
+    print(ppq.get())
