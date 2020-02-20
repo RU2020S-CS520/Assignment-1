@@ -16,9 +16,13 @@ class Maze:
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.size = num_rows * num_cols
-        self.grid = [[Cell() for j in range(num_cols)] for i in range(num_rows)]
+        self.visited_map = np.zeros((num_rows, num_cols))
+        self.start = np.random.randint(0, num_rows, 2)
+        self.end = np.random.randint(0, num_rows, 2)
+        self.map = np.zeros((num_rows, num_cols))
 
     def generate_maze(self):  # generate the maze environment by dfs
+        grid = [[Cell() for j in range(self.num_rows)] for i in range(self.num_rows)]
         visited_cells = list()  # the stack for dfs
         unvisited_cells = set()  # the set to keep unvisited cells, when the stack is empty, choose any one in this  set to be the start point for dfs
         for i in range(0, self.num_rows):
@@ -28,19 +32,20 @@ class Maze:
         row_start, col_start = random.randint(0, self.num_rows), random.randint(0, self.num_cols)
         row_cur, col_cur = row_start, col_start
         visited_cells.append((row_start, col_start))
-        self.grid[row_start][col_start].visited = True
+        grid[row_start][col_start].visited = True
         unvisited_cells.remove((row_start, col_start))
         while unvisited_cells:
 
-            neighbor_indices = self.find_neighbors(row_cur, col_cur)
+            neighbor_indices = self.find_neighbors((row_cur, col_cur))
+            neighbor_indices = [nb for nb in neighbor_indices if not grid[nb].visited]
             if neighbor_indices is not None:
                 row_next, col_next = random.choice(neighbor_indices)
                 pivot = random.randint(0, 100)
                 if pivot < 30:
-                    self.grid[row_next][col_next].blocked = 1  # mark block with probability 0.3
+                    grid[row_next][col_next].blocked = 1  # mark block with probability 0.3
                 else:
                     visited_cells.append((row_next, col_next))
-                self.grid[row_next][col_next].visited = True
+                grid[row_next][col_next].visited = True
                 unvisited_cells.remove((row_next, col_next))
                 row_cur, col_cur = row_next, col_next
 
@@ -50,11 +55,35 @@ class Maze:
 
                 row_cur, col_cur = unvisited_cells.pop()
                 visited_cells.append((row_cur, col_cur))
-                self.grid[row_cur][col_cur].visited=True
-        data = [[self.grid[i][j].blocked for j in range(self.num_cols)] for i in range(self.num_rows)]
-        return data
+                grid[row_cur][col_cur].visited=True
+        self.map = self.map + [[grid[i][j].blocked for j in range(self.num_cols)] for i in range(self.num_rows)]
+        self.map[self.start] = 0
+        self.map[self.end] = 0
+        self.visited_map[self.start] = 1
+        self.move([self.start])
+        self.visited_map[self.end] = 1
+        return
 
-    def vis_maze(self, grid):  # visualize the maze
+    def reset(self):
+        self.visited_map = np.zeros((self.num_rows, self.num_cols))
+        self.visited_map[self.start] = 1
+        self.move([self.start])
+        self.visited_map[self.end] = 1
+
+    def move(self, path):
+        for next_pos in path:
+            cur = next_pos
+            if self.map[cur] == 0:
+                self.start = cur
+                neighbors = self.find_neighbors(cur)
+                for nb in neighbors:
+                    self.visited_map[nb] = 1
+            else:
+                break
+        return
+
+
+    def visualize(self, grid):  # visualize the maze
         # create discrete colormap
         data = [[grid[i][j].blocked for j in range(101)] for i in range(101)]
         cmap = colors.ListedColormap(['white', 'black'])
@@ -71,17 +100,17 @@ class Maze:
 
         plt.show()
 
-    def find_neighbors(self, r, c):
-        row=r
-        col=c
+    def find_neighbors(self, pos):
+        row = pos[0]
+        col = pos[1]
         neighbors = list()
-        if row >= 1 and self.grid[row - 1][col].visited == False:  # up
+        if row - 1 >= 0: # up
             neighbors.append((row - 1, col))
-        if row + 1 < self.num_rows and self.grid[row + 1][col].visited == False:  # down
+        if row + 1 < self.num_rows:  # down
             neighbors.append((row + 1, col))
-        if col >= 1 and self.grid[row][col - 1].visited == False:  # left
+        if col - 1 >= 0:  # left
             neighbors.append((row, col - 1))
-        if col + 1 < self.num_cols and self.grid[row][col + 1].visited == False:  # right
+        if col + 1 < self.num_cols:  # right
             neighbors.append((row, col + 1))
         if len(neighbors) > 0:
             return neighbors
