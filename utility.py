@@ -16,10 +16,7 @@ class PriorityQueue:
     def get(self):
         return self.queue.get()[1]
 
+    def empty(self):
+        return self.queue.empty()
 
 
-if __name__ == '__main__':
-    ppq = PriorityQueue(1)
-    ppq.put(3, 4, 5)
-    ppq.put(3, 5, 6)
-    print(ppq.get())

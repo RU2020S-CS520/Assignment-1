@@ -5,9 +5,9 @@ dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 
 def valid(maze, pos):
-    if pos[0] < 0 or pos[0] >= maze.size:
+    if pos[0] < 0 or pos[0] >= maze.shape[0]:
         return False
-    if pos[1] < 0 or pos[1] >= maze.size:
+    if pos[1] < 0 or pos[1] >= maze.shape[0]:
         return False
     if maze[pos] == 1:
         return False
@@ -19,18 +19,16 @@ def manhattan_cost(u, v):
 
 
 def astar(maze, start, goal):
-    cost = np.full((maze.shape, maze.size), maze.size * maze.size)
-    tree = np.ones((maze.size, maze.size, 2))
+    cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
+    tree = np.zeros((maze.shape[0], maze.shape[0], 2), dtype=np.int16)
     tree[goal] = (-1, -1)
     cost[start] = 0
     pq = utility.PriorityQueue()
     pq.put(manhattan_cost(start, goal), 0, start)
     while not pq.empty():
-        current = pq.get()
-        if cost[goal] < current[0]:
-            return tree
-
-        cur_pos = current[1]
+        cur_pos = pq.get()
+        if cost[goal] < cost[cur_pos] + manhattan_cost(start, goal):
+            break
 
         for dir in dirs:
             next_pos = (cur_pos[0] + dir[0], cur_pos[1] + dir[1])
@@ -40,22 +38,31 @@ def astar(maze, start, goal):
                     pq.put(manhattan_cost(next_pos, goal), cost[next_pos], next_pos)
                     tree[next_pos] = cur_pos
 
-    return tree, cost
+    if tree[goal][0] != -1 and tree[goal][1] != -1:
+        cur = goal
+        path = []
+        while cur != start:
+            path = [cur] + path
+            cur = (tree[cur][0], tree[cur][1])
+        path = [start] + path
+    else:
+        path = [start]
+
+    return path, cost
 
 
 def ada_astar(maze, start, goal, last_cost):
-    cost = np.full((maze.size, maze.size), maze.size * maze.size)
-    tree = np.zeros((maze.size, maze.size, 2))
+    cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
+    tree = np.zeros((maze.shape[0], maze.shape[0], 2), dtype=np.int16)
     tree[goal] = (-1, -1)
     cost[start] = 0
     pq = utility.pq()
     pq.put(last_cost[goal] - last_cost[start], 0, start)
     while not pq.empty():
-        current = pq.get()
-        if cost[goal] < current[0]:
-            return tree
+        cur_pos = pq.get()
+        if cost[goal] < cost[cur_pos] + last_cost[goal] - last_cost[next_pos]:
+            break
 
-        cur_pos = current[1]
 
         for dir in dirs:
             next_pos = (cur_pos[0] + dir[0], cur_pos[1] + dir[1])
@@ -65,4 +72,24 @@ def ada_astar(maze, start, goal, last_cost):
                     pq.put(last_cost[goal] - last_cost[next_pos], cost[next_pos], start)
                     tree[next_pos] = cur_pos
 
-    return tree, cost
+    if tree[goal][0] != -1 and tree[goal][1] != -1:
+        cur = goal
+        path = []
+        while cur != start:
+            path = [cur] + path
+            cur = (tree[cur][0], tree[cur][1])
+        path = [start] + path
+    else:
+        path = [start]
+
+    return path, cost
+
+
+if __name__ == '__main__':
+    kk = np.zeros((3, 3))
+    kd = np.ones((3, 3))
+    tp = []
+    tp = [(1, 2)] + tp
+    print(tp)
+    kk[2, 2] = 1
+    print(kd.shape[0])

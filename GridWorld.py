@@ -17,8 +17,8 @@ class Maze:
         self.num_cols = num_cols
         self.size = num_rows * num_cols
         self.visited_map = np.zeros((num_rows, num_cols))
-        self.start = np.random.randint(0, num_rows, 2)
-        self.end = np.random.randint(0, num_rows, 2)
+        self.start = (np.random.randint(0, num_rows), np.random.randint(0, num_cols))
+        self.end = (np.random.randint(0, num_rows), np.random.randint(0, num_cols))
         self.map = np.zeros((num_rows, num_cols))
 
     def generate_maze(self):  # generate the maze environment by dfs
@@ -29,7 +29,7 @@ class Maze:
             for j in range(0, self.num_cols):
                 unvisited_cells.add((i, j))
 
-        row_start, col_start = random.randint(0, self.num_rows), random.randint(0, self.num_cols)
+        row_start, col_start = random.randint(0, self.num_rows - 1), random.randint(0, self.num_cols - 1)
         row_cur, col_cur = row_start, col_start
         visited_cells.append((row_start, col_start))
         grid[row_start][col_start].visited = True
@@ -37,8 +37,8 @@ class Maze:
         while unvisited_cells:
 
             neighbor_indices = self.find_neighbors((row_cur, col_cur))
-            neighbor_indices = [nb for nb in neighbor_indices if not grid[nb].visited]
-            if neighbor_indices is not None:
+            neighbor_indices = [nb for nb in neighbor_indices if not grid[nb[0]][nb[1]].visited]
+            if neighbor_indices:
                 row_next, col_next = random.choice(neighbor_indices)
                 pivot = random.randint(0, 100)
                 if pivot < 30:
@@ -55,14 +55,30 @@ class Maze:
 
                 row_cur, col_cur = unvisited_cells.pop()
                 visited_cells.append((row_cur, col_cur))
-                grid[row_cur][col_cur].visited=True
+                grid[row_cur][col_cur].visited = True
         self.map = self.map + [[grid[i][j].blocked for j in range(self.num_cols)] for i in range(self.num_rows)]
         self.map[self.start] = 0
         self.map[self.end] = 0
         self.visited_map[self.start] = 1
+        print([self.start, self.end])
         self.move([self.start])
         self.visited_map[self.end] = 1
         return
+
+    def vis_map(self, path):
+        map_temp = self.visited_map * self.map
+        for next_pos in path:
+            map_temp[next_pos] = 2
+        map_temp[self.start] = 3
+        map_temp[self.end] = 3
+        cmap = colors.ListedColormap(['white', 'black', 'blue', 'red'])
+        bounds = [0, 1, 2, 3, 4]
+        norm = colors.BoundaryNorm(bounds, cmap.N)
+
+        fig, ax = plt.subplots()
+        ax.imshow(map_temp, cmap=cmap, norm=norm)
+
+        plt.show()
 
     def reset(self):
         self.visited_map = np.zeros((self.num_rows, self.num_cols))
@@ -73,6 +89,7 @@ class Maze:
     def move(self, path):
         for next_pos in path:
             cur = next_pos
+            print(cur)
             if self.map[cur] == 0:
                 self.start = cur
                 neighbors = self.find_neighbors(cur)
@@ -82,10 +99,12 @@ class Maze:
                 break
         return
 
+    def get_map(self):
+        return self.visited_map * self.map
 
-    def visualize(self, grid):  # visualize the maze
+    def visualize(self):  # visualize the maze
         # create discrete colormap
-        data = [[grid[i][j].blocked for j in range(101)] for i in range(101)]
+        data = self.map
         cmap = colors.ListedColormap(['white', 'black'])
         bounds = [0, 1, 2]
         norm = colors.BoundaryNorm(bounds, cmap.N)
@@ -94,9 +113,9 @@ class Maze:
         ax.imshow(data, cmap=cmap, norm=norm)
 
         # draw gridlines
-        #ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=1)
-       # ax.set_xticks(np.arange(-.5, 101, 1));
-       # ax.set_yticks(np.arange(-.5, 101, 1));
+        # ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=1)
+        # ax.set_xticks(np.arange(-.5, 101, 1));
+        # ax.set_yticks(np.arange(-.5, 101, 1));
 
         plt.show()
 
@@ -104,7 +123,7 @@ class Maze:
         row = pos[0]
         col = pos[1]
         neighbors = list()
-        if row - 1 >= 0: # up
+        if row - 1 >= 0:  # up
             neighbors.append((row - 1, col))
         if row + 1 < self.num_rows:  # down
             neighbors.append((row + 1, col))
@@ -112,10 +131,10 @@ class Maze:
             neighbors.append((row, col - 1))
         if col + 1 < self.num_cols:  # right
             neighbors.append((row, col + 1))
-        if len(neighbors) > 0:
-            return neighbors
-        else:
-            return None
+        return neighbors
 
 
-
+if __name__ == '__main__':
+    maze = Maze(10, 10)
+    maze.generate_maze()
+    maze.vis_map([])
