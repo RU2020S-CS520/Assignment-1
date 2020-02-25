@@ -7,10 +7,11 @@ if __name__ == '__main__':
 
     maze.generate_maze()
     maze.visualize()
+    last_cost = None
     while maze.start[0] != maze.end[0] or maze.start[1] != maze.end[1]:
-        result = search.astar(maze.get_map(), maze.end, maze.start, 1)
+        result = search.ada_astar(maze.get_map(), maze.end, maze.start, last_cost, 1)
         path = result[0]
-        print(path)
+        last_cost = result[1]
         if path[-1] == maze.start:
             print("no path")
             break
