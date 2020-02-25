@@ -18,7 +18,7 @@ def manhattan_cost(u, v):
     return abs(u[0] - v[0]) + abs(u[1] - v[1])
 
 
-def astar(maze, start, goal):
+def astar(maze, start, goal, decode_mode = 0):
     cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
     tree = np.zeros((maze.shape[0], maze.shape[0], 2), dtype=np.int16)
     tree[goal] = (-1, -1)
@@ -42,7 +42,10 @@ def astar(maze, start, goal):
         cur = goal
         path = []
         while cur != start:
-            path = [cur] + path
+            if decode_mode == 0:
+                path = [cur] + path
+            elif decode_mode == 1:
+                path = path + [cur]
             cur = (tree[cur][0], tree[cur][1])
         path = [start] + path
     else:
@@ -51,7 +54,7 @@ def astar(maze, start, goal):
     return path, cost
 
 
-def ada_astar(maze, start, goal, last_cost):
+def ada_astar(maze, start, goal, last_cost, decode_mode = 0):
     cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
     tree = np.zeros((maze.shape[0], maze.shape[0], 2), dtype=np.int16)
     tree[goal] = (-1, -1)
@@ -72,15 +75,20 @@ def ada_astar(maze, start, goal, last_cost):
                     pq.put(last_cost[goal] - last_cost[next_pos], cost[next_pos], start)
                     tree[next_pos] = cur_pos
 
-    if tree[goal][0] != -1 and tree[goal][1] != -1:
-        cur = goal
-        path = []
-        while cur != start:
-            path = [cur] + path
-            cur = (tree[cur][0], tree[cur][1])
-        path = [start] + path
-    else:
-        path = [start]
+
+        if tree[goal][0] != -1 and tree[goal][1] != -1:
+            cur = goal
+            path = []
+            while cur != start:
+                if decode_mode == 0:
+                    path = [cur] + path
+                elif decode_mode == 1:
+                    path = path + [cur]
+                cur = (tree[cur][0], tree[cur][1])
+            path = [start] + path
+        else:
+            path = [start]
+
 
     return path, cost
 
