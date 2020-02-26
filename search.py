@@ -17,8 +17,14 @@ def valid(maze, pos):
 def manhattan_cost(u, v):
     return abs(u[0] - v[0]) + abs(u[1] - v[1])
 
+def ada_heuristic(goal, cur, cost):
+    if cost[cur] == cost.shape[0] * cost.shape[0]:
+        h_cur = manhattan_cost(goal, cur)
+    else:
+        h_cur = cost[goal] - cost[cur]
+    return h_cur
 
-def decode_path(tree, start, goal, decode_mode):
+def decode_path(tree, start, goal, decode_mode=0):
     if tree[goal][0] != -1 and tree[goal][1] != -1:
         cur = goal
         path = []
@@ -33,7 +39,6 @@ def decode_path(tree, start, goal, decode_mode):
         path = [start]
 
     return path
-
 
 def astar(maze, start, goal, decode_mode=0):
 
@@ -50,6 +55,7 @@ def astar(maze, start, goal, decode_mode=0):
     pq.put(manhattan_cost(start, goal), 0, start)
     while not pq.empty():
         cur_pos = pq.get()
+
         if cost[goal] < cost[cur_pos] + manhattan_cost(start, goal):
             break
 
@@ -74,6 +80,7 @@ def ada_astar(maze, start, goal, last_cost, decode_mode=0):
         goal = temp
 
     if last_cost is None:
+
         return astar(maze, start, goal, decode_mode)
 
     cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
@@ -84,8 +91,7 @@ def ada_astar(maze, start, goal, last_cost, decode_mode=0):
     pq.put(last_cost[goal] - last_cost[start], 0, start)
     while not pq.empty():
         cur_pos = pq.get()
-
-        if cost[goal] < cost[cur_pos] + last_cost[goal] - last_cost[cur_pos]:
+        if cost[goal] < cost[cur_pos] + ada_heuristic(goal, cur_pos, last_cost):
             break
 
         for dir in dirs:
@@ -93,7 +99,8 @@ def ada_astar(maze, start, goal, last_cost, decode_mode=0):
             if valid(maze, next_pos):
                 if cost[next_pos] > cost[cur_pos] + 1:
                     cost[next_pos] = cost[cur_pos] + 1
-                    pq.put(last_cost[goal] - last_cost[next_pos], cost[next_pos], next_pos)
+
+                    pq.put(ada_heuristic(goal, next_pos, last_cost), cost[next_pos], next_pos)
                     tree[next_pos] = cur_pos
 
         path = decode_path(tree, start, goal, decode_mode)
@@ -102,10 +109,8 @@ def ada_astar(maze, start, goal, last_cost, decode_mode=0):
 
 
 if __name__ == '__main__':
-    kk = np.zeros((3, 3))
-    kd = np.ones((3, 3))
-    tp = []
-    tp = [(1, 2)] + tp
-    print(tp)
-    kk[2, 2] = 1
-    print(kd.shape[0])
+    a = (1, 2)
+    b = (1, 2)
+    c = (1, 3)
+    print(a==b)
+    print(a==c)
