@@ -36,6 +36,12 @@ def decode_path(tree, start, goal, decode_mode):
 
 
 def astar(maze, start, goal, decode_mode=0):
+
+    if decode_mode == 1:
+        temp = start
+        start = goal
+        goal = temp
+
     cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
     tree = np.zeros((maze.shape[0], maze.shape[0], 2), dtype=np.int16)
     tree[goal] = (-1, -1)
@@ -61,6 +67,12 @@ def astar(maze, start, goal, decode_mode=0):
 
 
 def ada_astar(maze, start, goal, last_cost, decode_mode=0):
+
+    if decode_mode == 1:
+        temp = start
+        start = goal
+        goal = temp
+
     if last_cost is None:
         return astar(maze, start, goal, decode_mode)
 
