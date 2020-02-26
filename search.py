@@ -17,6 +17,7 @@ def valid(maze, pos):
 def manhattan_cost(u, v):
     return abs(u[0] - v[0]) + abs(u[1] - v[1])
 
+
 def ada_heuristic(goal, cur, cost):
     if cost[cur] == cost.shape[0] * cost.shape[0]:
         h_cur = manhattan_cost(goal, cur)
@@ -24,8 +25,9 @@ def ada_heuristic(goal, cur, cost):
         h_cur = cost[goal] - cost[cur]
     return h_cur
 
+
 def decode_path(tree, start, goal, decode_mode=0):
-    if tree[goal][0] != -1 and tree[goal][1] != -1:
+    if tree[goal] != (-1, -1):
         cur = goal
         path = []
         while cur != start:
@@ -40,8 +42,8 @@ def decode_path(tree, start, goal, decode_mode=0):
 
     return path
 
-def astar(maze, start, goal, decode_mode=0):
 
+def astar(maze, start, goal, decode_mode=0):
     if decode_mode == 1:
         temp = start
         start = goal
@@ -73,14 +75,12 @@ def astar(maze, start, goal, decode_mode=0):
 
 
 def ada_astar(maze, start, goal, last_cost, decode_mode=0):
-
     if decode_mode == 1:
         temp = start
         start = goal
         goal = temp
 
     if last_cost is None:
-
         return astar(maze, start, goal, decode_mode)
 
     cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
@@ -112,5 +112,5 @@ if __name__ == '__main__':
     a = (1, 2)
     b = (1, 2)
     c = (1, 3)
-    print(a==b)
-    print(a==c)
+    print(a == b)
+    print(a == c)
