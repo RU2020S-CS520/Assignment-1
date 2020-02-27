@@ -27,40 +27,46 @@ def ada_heuristic(goal, cur, cost):
 
 
 def decode_path(tree, start, goal, decode_mode=0):
-    if tree[goal] != (-1, -1):
+    goal_last = (tree[goal][0], tree[goal][1])
+    if goal_last != (-1, -1):
         cur = goal
         path = []
-        while cur != start:
-            if decode_mode == 0:
+        if decode_mode == 0:
+            while cur != start:
                 path = [cur] + path
-            elif decode_mode == 1:
+                cur = (tree[cur][0], tree[cur][1])
+            path = [start] + path
+        elif decode_mode == 1:
+            while cur != start:
                 path = path + [cur]
-            cur = (tree[cur][0], tree[cur][1])
-        path = [start] + path
+                cur = (tree[cur][0], tree[cur][1])
+            path = path + [start]
     else:
-        path = [start]
+        path = [goal_last]
 
     return path
 
 
-def astar(maze, start, goal, decode_mode=0):
+def astar(maze, start, goal, decode_mode=0, priority=1):
     if decode_mode == 1:
         temp = start
         start = goal
         goal = temp
 
     cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
+    exp_cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
     tree = np.zeros((maze.shape[0], maze.shape[0], 2), dtype=np.int16)
     tree[goal] = (-1, -1)
     cost[start] = 0
-    pq = utility.PriorityQueue(0)
+    pq = utility.PriorityQueue(priority)
     pq.put(manhattan_cost(start, goal), 0, start)
     while not pq.empty():
         cur_pos = pq.get()
-
-        if cost[goal] < cost[cur_pos] + manhattan_cost(start, goal):
+        if cost[goal] < cost[cur_pos] + manhattan_cost(cur_pos, goal):
+            exp_cost[goal] = cost[goal]
             break
 
+        exp_cost[cur_pos] = cost[cur_pos]
         for dir in dirs:
             next_pos = (cur_pos[0] + dir[0], cur_pos[1] + dir[1])
             if valid(maze, next_pos):
@@ -71,10 +77,17 @@ def astar(maze, start, goal, decode_mode=0):
 
     path = decode_path(tree, start, goal, decode_mode)
 
-    return path, cost
+    expanded = 0
+
+    for row in range(cost.shape[0]):
+        for col in range(cost.shape[0]):
+            if exp_cost[col, row] != maze.shape[0] * maze.shape[0]:
+                expanded = expanded + 1
+
+    return path, exp_cost, expanded
 
 
-def ada_astar(maze, start, goal, last_cost, decode_mode=0):
+def ada_astar(maze, start, goal, last_cost, decode_mode=0, priority=1):
     if decode_mode == 1:
         temp = start
         start = goal
@@ -83,34 +96,46 @@ def ada_astar(maze, start, goal, last_cost, decode_mode=0):
     if last_cost is None:
         return astar(maze, start, goal, decode_mode)
 
+
     cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
+    exp_cost = np.full((maze.shape[0], maze.shape[0]), maze.shape[0] * maze.shape[0])
     tree = np.zeros((maze.shape[0], maze.shape[0], 2), dtype=np.int16)
     tree[goal] = (-1, -1)
     cost[start] = 0
-    pq = utility.PriorityQueue(0)
-    pq.put(last_cost[goal] - last_cost[start], 0, start)
+    pq = utility.PriorityQueue(priority)
+    pq.put(ada_heuristic(goal, start, last_cost), 0, start)
+
     while not pq.empty():
         cur_pos = pq.get()
         if cost[goal] < cost[cur_pos] + ada_heuristic(goal, cur_pos, last_cost):
+            exp_cost[goal] = cost[goal]
             break
+
+        exp_cost[cur_pos] = cost[cur_pos]
 
         for dir in dirs:
             next_pos = (cur_pos[0] + dir[0], cur_pos[1] + dir[1])
             if valid(maze, next_pos):
                 if cost[next_pos] > cost[cur_pos] + 1:
                     cost[next_pos] = cost[cur_pos] + 1
-
+                    if ada_heuristic(goal, next_pos, last_cost) < manhattan_cost(goal, next_pos):
+                        print(ada_heuristic(goal, next_pos, last_cost), manhattan_cost(goal, next_pos))
                     pq.put(ada_heuristic(goal, next_pos, last_cost), cost[next_pos], next_pos)
                     tree[next_pos] = cur_pos
 
         path = decode_path(tree, start, goal, decode_mode)
 
-    return path, cost
+    expanded = 0
+
+    for row in range(cost.shape[0]):
+        for col in range(cost.shape[0]):
+            if exp_cost[col, row] != maze.shape[0] * maze.shape[0]:
+                expanded = expanded + 1
+
+    return path, exp_cost, expanded
 
 
 if __name__ == '__main__':
-    a = (1, 2)
-    b = (1, 2)
-    c = (1, 3)
-    print(a == b)
-    print(a == c)
+    a = [1, 2]
+    print([3] + a)
+    print(a + [3])
