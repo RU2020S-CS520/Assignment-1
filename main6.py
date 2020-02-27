@@ -8,7 +8,7 @@ if __name__ == '__main__':
     expanded2_all = []
     total1 = 0
     total2 = 0
-    for i in range(20):
+    for i in range(50):
         times1 = 0
         times2 = 0
         maze = GridWorld.Maze(101, 101)
@@ -46,7 +46,6 @@ if __name__ == '__main__':
             if path2[-1] == (-1, -1):
                 print("no path")
                 break
-            # print(path2)
             # maze2.vis_map(path2)
             maze2.move(path2)
             # print(result2[2])
@@ -57,7 +56,7 @@ if __name__ == '__main__':
     plt.figure('repeated and adaptive')
     y1 = expanded1_all
     y2 = expanded2_all
-    x = np.linspace(1, 20, 20)
+    x = np.linspace(1, 50, 50)
     plt.plot(x, y1, color='blue', label='adaptive')
     plt.plot(x, y2, color='red', label='repeated')
     plt.xlabel('experiments')
