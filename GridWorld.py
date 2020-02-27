@@ -12,13 +12,16 @@ class Cell:
 
 
 class Maze:
-    def __init__(self, num_rows, num_cols):
+    def __init__(self, num_rows, num_cols, start = (1, 1), goal = (-1, -1)):
+        if goal == (-1, -1):
+            goal = (num_cols - 2, num_rows - 2)
+
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.size = num_rows * num_cols
         self.visited_map = np.zeros((num_rows, num_cols))
-        self.start = (np.random.randint(0, num_rows), np.random.randint(0, num_cols))
-        self.end = (np.random.randint(0, num_rows), np.random.randint(0, num_cols))
+        self.start = start
+        self.end = goal
         self.map = np.zeros((num_rows, num_cols))
 
     def generate_maze(self):  # generate the maze environment by dfs
@@ -66,6 +69,8 @@ class Maze:
         return
 
     def vis_map(self, path):
+
+
         map_temp = self.visited_map * self.map
         for next_pos in path:
             map_temp[next_pos] = 2
@@ -77,7 +82,6 @@ class Maze:
 
         fig, ax = plt.subplots()
         ax.imshow(map_temp, cmap=cmap, norm=norm)
-
         plt.show()
 
     def reset(self):
@@ -89,7 +93,6 @@ class Maze:
     def move(self, path):
         for next_pos in path:
             cur = next_pos
-            print(cur)
             if self.map[cur] == 0:
                 self.start = cur
                 neighbors = self.find_neighbors(cur)

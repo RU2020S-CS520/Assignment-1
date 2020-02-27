@@ -19,4 +19,3 @@ class PriorityQueue:
     def empty(self):
         return self.queue.empty()
 
-
