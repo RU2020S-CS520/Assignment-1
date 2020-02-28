@@ -62,6 +62,7 @@ def astar(maze, start, goal, decode_mode=0, priority=1):
     pq = utility.PriorityQueue(priority)
     pq.put(heuristics[start], 0, start)
     while not pq.empty():
+
         cur_pos = pq.get()
         if cost[goal] <= cost[cur_pos] + heuristics[cur_pos]:
             closed_list = closed_list + [goal]
@@ -73,6 +74,8 @@ def astar(maze, start, goal, decode_mode=0, priority=1):
             next_pos = (cur_pos[0] + dir[0], cur_pos[1] + dir[1])
             if valid(maze, next_pos):
                 if cost[next_pos] > cost[cur_pos] + 1:
+                    if cost[next_pos] != maze.shape[0] * maze.shape[0]:
+                        pq.remove(next_pos)
                     cost[next_pos] = cost[cur_pos] + 1
                     pq.put(heuristics[next_pos], cost[next_pos], next_pos)
                     tree[next_pos] = cur_pos
@@ -117,10 +120,14 @@ def ada_astar(maze, start, goal, heuristics, decode_mode=0, priority=1):
             next_pos = (cur_pos[0] + dir[0], cur_pos[1] + dir[1])
             if valid(maze, next_pos):
                 if cost[next_pos] > cost[cur_pos] + 1:
+                    if cost[next_pos] != maze.shape[0] * maze.shape[0]:
+                        pq.remove(next_pos)
+
                     cost[next_pos] = cost[cur_pos] + 1
 
                     # if heuristics[next_pos] > manhattan_cost(goal, next_pos):
                     #     print(heuristics[next_pos], manhattan_cost(goal, next_pos))
+
                     pq.put(heuristics[next_pos], cost[next_pos], next_pos)
                     tree[next_pos] = cur_pos
 

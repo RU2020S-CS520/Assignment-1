@@ -1,7 +1,6 @@
 import numpy as np
-import GridWorld
-import search
-from copy import deepcopy
+import search, GridWorld
+import deepcopy
 import matplotlib.pyplot as plt
 
 

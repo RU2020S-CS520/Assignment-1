@@ -1,6 +1,5 @@
 import numpy as np
-import GridWorld
-import search
+import search, GridWorld
 from copy import deepcopy
 import matplotlib.pyplot as plt
 if __name__ == '__main__':
@@ -8,7 +7,7 @@ if __name__ == '__main__':
     expanded2_all = []
     total1 = 0
     total2 = 0
-    for i in range(50):
+    for i in range(20):
         times1 = 0
         times2 = 0
         maze = GridWorld.Maze(101, 101)
@@ -52,7 +51,7 @@ if __name__ == '__main__':
         total2 = total2 + expanded2
         expanded2_all.append(expanded2)
 
-    print(total1, total2)
+    print(total1/50, total2/50)
     plt.figure('repeated and adaptive')
     y1 = expanded1_all
     y2 = expanded2_all

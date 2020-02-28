@@ -1,10 +1,5 @@
-import numpy as np
-import GridWorld
-import search
-from copy import deepcopy
-import matplotlib.pyplot as plt
-
-
+import search, GridWorld
+import deepcopy
 
 if __name__ == '__main__':
     expanded1_all=[]
@@ -15,6 +10,8 @@ if __name__ == '__main__':
         maze.test()
         last_cost = None
         k = 0
+        tt2 = 0
+        tt1 = 0
         maze2 = deepcopy(maze)
         while maze.start[0] != maze.end[0] or maze.start[1] != maze.end[1]:
             result2 = search.ada_astar(maze.get_map(), maze.start, maze.end, last_cost, decode_mode=0, priority=1)
@@ -25,6 +22,8 @@ if __name__ == '__main__':
                 print("no path")
                 break
             last_cost = result2[1]
+            tt2 += result2[2]
+            print(result2[2])
             maze.move(path)
             # maze2.vis_map(path2)
         while maze2.start[0] != maze2.end[0] or maze2.start[1] != maze2.end[1]:
@@ -35,5 +34,7 @@ if __name__ == '__main__':
                 print("no path")
                 break
 
-            maze2.vis_map(path2)
+            tt1 += result[2]
+            print(result[2])
+            #maze2.vis_map(path2)
             maze2.move(path2)

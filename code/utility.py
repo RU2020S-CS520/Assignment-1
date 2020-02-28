@@ -12,25 +12,16 @@ class PriorityQueue:
         elif self.mode == 1:
             self.queue.put((h_cost + g_cost, -g_cost, data))
         return
-    def top(self):
-        #return self.queue.queue[0][0][0]
-        pass
-    def remove(self,s):
+
+    def remove(self, s):
         for i in self.queue.queue:
-            if s[0]==i[1][0] and s[1]==i[1][1]:
+            if s[0] == i[2][0] and s[1] == i[2][1]:
                 self.queue.queue.remove(i)
                 return
         return False
 
     def get(self):
         return self.queue.get()[2]
-    def in_open(self,s):
-        for i in self.queue.queue:
-            if s[0]==i[1][0] and s[1]==i[1][1]:
-                return True
-        return False
-
-
 
     def empty(self):
         return self.queue.empty()

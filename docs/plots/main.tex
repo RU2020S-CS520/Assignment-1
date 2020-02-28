@@ -1,0 +1,157 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fphw Assignment
+% LaTeX Template
+% Version 1.0 (27/04/2019)
+%
+% This template originates from:
+% https://www.LaTeXTemplates.com
+%
+% Authors:
+% Class by Felipe Portales-Oliva (f.portales.oliva@gmail.com) with template 
+% content and modifications by Vel (vel@LaTeXTemplates.com)
+%
+% Template (this file) License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[
+	12pt, % Default font size, values between 10pt-12pt are allowed
+	%letterpaper, % Uncomment for US letter paper size
+	%spanish, % Uncomment for Spanish
+]{fphw}
+
+% Template-specific packages
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+\usepackage{mathpazo} % Use the Palatino font
+
+\usepackage{graphicx} % Required for including images
+
+\usepackage{booktabs} % Required for better horizontal rules in tables
+
+\usepackage{listings} % Required for insertion of code
+
+\usepackage{enumerate} % To modify the enumerate environment
+
+\usepackage{amsmath,amssymb,xspace,epsfig}
+
+\usepac\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}  % Use Input in the format of Algorithm
+\renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithmkage{}
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Homework \#1} % Assignment title
+
+\author{Wenzheng Zhang, Qi Wu} % Student name
+
+\date{Mar 1st} % Due date
+
+\institute{rutgers university} % Institute or school name
+
+\class{CS 520} % Course or class name
+
+\professor{Dr. Abdeslam Boularias} % Professor or teacher in charge of the assignment
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Output the assignment title, created automatically using the information in the custom commands above
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT CONTENT
+%----------------------------------------------------------------------------------------
+
+\section*{Part 1}
+
+
+
+
+%------------------------------------------------
+
+\subsection*{a}
+ The estimated cost of cheapest solution through the east neighbor of the agent is $$f(east)=g(east)+h(east)=1+h(east)=1+2=3$$, but the estimated cost of cheapest solution through the north neighbor of the agent is $$f(north)=g(north)+h(north)=1+h(north)=1+4=5$$ 
+ According to the rule of A* search, because $f(east)<f(north)$, we choose to move the agent to  the east at the first step given that the agent doesn't know initially which cells are blocked.
+
+
+\subsection*{b}
+ We keep a closed list and the agent never comes back to the cells in the closed list. Because the grid world is finite, we can put at most finite number of cells  into the closed  list, which means we can only move finite steps to find the target or report that it is impossible to reach the target if we cannot find unblocked neighbors at one cell.\\
+ Suppose there are n unblocked  cells in the grid world. According to the repeated A* algorithm this project use, the length of the path we compute every time is at most n. And we can compute path at most for n times, which means we  need to compute path after each move. Therefore, that the number of moves of the agent until it reaches the target or discovers that this is impossible is $O(n\times n)=O(n^2)$.
+
+
+
+%----------------------------------------------------------------------------------------
+
+\section*{Part 2}
+
+
+
+%------------------------------------------------
+We set 2 different modes of priority queue for the open list in A* search. If we set mode=0, we use $f(s)+g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $f(s)-g(s)$ as priorities to break ties in favor of cells with larger g-values. For the same maze we generate, we run A* search using two different modes of priority queue.  Here is 10 results of 10 different experiment:\\ \\
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|} 
+\hline 
+mode= 0&8147&855&9062&2364&14177&2562&4587&5762&10474&943\\
+\hline  
+mode=1&767&216&949&677&1321&889&1402&1885&1090&461\\
+\hline 
+\end{tabular}\\
+\\
+From the table we can know the number of expanded cells of mode=0 is always bigger than the number of expanded cells of mode=1, which means the  Repeated Forward A* with larger g-value tie break strategy
+is much faster than Repeated Forward A* with smaller g-value tie break
+strategy.\\
+The reason is that  if we choose larger g-value to break ties, the agent will choose 
+
+
+
+
+
+%----------------------------------------------------------------------------------------
+
+\section*{3}
+
+
+
+
+
+
+
+%------------------------------------------------
+
+\subsection*{Answer} 
+Let $x_{ij}=1$ if number i is hashed to bucket j. Let $n_j$ denotes the number of elements in bucket j. For bucket j, we know the bubble sort algorithm of sorting this bucket j is $O(n_j^2)$. Thus, the total expected running time is $$E(\sum_{j=1}^n O(n_j^2))=\sum_{j=1}^n O(E(n_j^2))$$
+We know $$E(n_j^2)=\sum_{i=1}^n\sum_{k=1}^nE(x_{ij}x_{kj}=\sum_{i=1}^nE(x_{ij}^2))+2\sum_{i=1}^n\sum_{k=i+1}^nE(x_{ij}x_{kj})=n\times \frac{1}{n}+2\times\binom{n}{2}\frac{1}{n^2}=O(1)$$ Therefore, the expected running time is $$E(\sum_{j=1}^n O(n_j^2))=\sum_{j=1}^n O(E(n_j^2))=n\times O(1)=O(n)$$
+
+%----------------------------------------------------------------------------------------
+
+\section*{4}
+
+
+
+%------------------------------------------------
+
+\subsection*{a}
+Let $H=\{constant(a)| 0\leq a\leq m-1\}$ This set of hash functions is uniform because for all x and i($0\leq i \leq m-1$), $Prob(h(x)=i)=\frac{1}{m}$. This set of hash functions is not universal because for all $x\neq y$, $Prob(h(x)=h(y))=1\neq \frac{1}{m}$. Therefore, this set of hash functions is uniform but not universal.
+
+
+
+\subsection*{b}
+Let $H=\{h_{a,b}(x,y)=ax+by\pmod m|0\leq a,b \leq m-1\}$. This set of hash function is universal from class, that is, for input $(x,y)\neq (x',y')$,
+ we assume $x\neq x'$, if $ax+by=ax'+by'\pmod m$, we get $a=\frac{b(y'-y)}{x-x'}\pmod m$, if b is fixed, a is fixed according to this equation. Thus, m of hash functions can cause collision of $(x,y)$ and $(x',y')$, and there are $m^2$ hash functions in total. Thus the probability of $Prob(h(x,y)=h(x',y')=\frac{m}{m^2}=\frac{1}{m})$.\\
+ This set of hash functions is not strongly universal because if $h(x,y)=ax+by\equiv i\pmod m$ and $h(x',y')=ax'+by'\equiv j\pmod m$, we can get $a=\frac{(i-j)-b(y-y')}{x-x'}\pmod m$. When b is fixed, a is fixed according to this equation.Thus, there are m hash functions satisfying $h(x,y)=i\And h(x',y')=j$. Thus, $Prob(h(x,y)=i \And h(x',y')=j)=\frac{m}{m^2}=\frac{1}{m}\neq \frac{1}{m^2}$. Therefore, this set 
+$H=\{h_{a,b}(x,y)=ax+by\pmod m|0\leq a,b \leq m-1\}$ is universal but not strongly universal.
+
+%----------------------------------------------------------------------------------------
+
+
+
+\end{document}

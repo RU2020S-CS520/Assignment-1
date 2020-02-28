@@ -1,6 +1,4 @@
-import numpy as np
-import GridWorld
-import search
+import search, GridWorld
 from copy import deepcopy
 
 
@@ -15,7 +13,7 @@ if __name__ == '__main__':
     expanded1=0
     expanded2=0
     while maze.start[0] != maze.end[0] or maze.start[1] != maze.end[1]:
-        result = search.astar(maze.get_map(), maze.start, maze.end,mode=0)
+        result = search.astar(maze.get_map(), maze.start, maze.end, mode=0)
 
         path = result[0]
         print(path)
