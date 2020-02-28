@@ -1,4 +1,5 @@
 from queue import PriorityQueue as pq
+import heapq
 import numpy as np
 
 
@@ -10,14 +11,13 @@ class PriorityQueue:
 
     def put(self, h_cost, g_cost, data):
         if self.mode == 0:
-            self.queue.put(((h_cost + g_cost, g_cost, np.random.rand(1)), data))
+            self.queue.put((h_cost + g_cost, g_cost, np.random.rand(1), data))
         elif self.mode == 1:
-            self.queue.put(((h_cost + g_cost, -g_cost, np.random.rand(1)), data))
+            self.queue.put((h_cost + g_cost, -g_cost, np.random.rand(1), data))
         return
 
     def get(self):
-        return self.queue.get()[1]
+        return self.queue.get()[3]
 
-    def empty(self):
-        return self.queue.empty()
+
 
