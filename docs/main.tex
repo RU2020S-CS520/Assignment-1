@@ -1,50 +1,14 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% fphw Assignment
-% LaTeX Template
-% Version 1.0 (27/04/2019)
-%
-% This template originates from:
-% https://www.LaTeXTemplates.com
-%
-% Authors:
-% Class by Felipe Portales-Oliva (f.portales.oliva@gmail.com) with template 
-% content and modifications by Vel (vel@LaTeXTemplates.com)
-%
-% Template (this file) License:
-% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%----------------------------------------------------------------------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
-%----------------------------------------------------------------------------------------
-
-\documentclass[
-	12pt, % Default font size, values between 10pt-12pt are allowed
-	%letterpaper, % Uncomment for US letter paper size
-	%spanish, % Uncomment for Spanish
-]{fphw}
-
-% Template-specific packages
-\usepackage[utf8]{inputenc} % Required for inputting international characters
-\usepackage[T1]{fontenc} % Output font encoding for international characters
-\usepackage{mathpazo} % Use the Palatino font
-
-\usepackage{graphicx} % Required for including images
-
-\usepackage{booktabs} % Required for better horizontal rules in tables
-
-\usepackage{listings} % Required for insertion of code
-
-\usepackage{enumerate} % To modify the enumerate environment
-
+\documentclass[11pt]{article}
 \usepackage{amsmath,amssymb,xspace,epsfig}
-
-\usepac\usepackage{algorithm}
+\usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{algorithmicx}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{natbib}
+\usepackage[colorlinks]{hyperref}
 
-\renewcommand{\algorithmicrequire}{\textbf{Input:}}  % Use Input in the format of Algorithm
-\renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithmkage{}
+\graphicspath{{plots/}}
 
 %----------------------------------------------------------------------------------------
 %	ASSIGNMENT INFORMATION
@@ -53,14 +17,6 @@
 \title{Homework \#1} % Assignment title
 
 \author{Wenzheng Zhang, Qi Wu} % Student name
-
-\date{Mar 1st} % Due date
-
-\institute{rutgers university} % Institute or school name
-
-\class{CS 520} % Course or class name
-
-\professor{Dr. Abdeslam Boularias} % Professor or teacher in charge of the assignment
 
 %----------------------------------------------------------------------------------------
 
@@ -80,7 +36,9 @@
 %------------------------------------------------
 
 \subsection*{a}
- The estimated cost of cheapest solution through the east neighbor of the agent is $$f(east)=g(east)+h(east)=1+h(east)=1+2=3$$, but the estimated cost of cheapest solution through the north neighbor of the agent is $$f(north)=g(north)+h(north)=1+h(north)=1+4=5$$ 
+ The estimated cost of cheapest solution through the east neighbor of the agent is
+ $$f(east)=g(east)+h(east)=1+h(east)=1+2=3$$ 
+ But the estimated cost of cheapest solution through the north neighbor of the agent is $$f(north)=g(north)+h(north)=1+h(north)=1+4=5$$ 
  According to the rule of A* search, because $f(east)<f(north)$, we choose to move the agent to  the east at the first step given that the agent doesn't know initially which cells are blocked.
 
 
@@ -97,58 +55,114 @@
 
 
 %------------------------------------------------
-We set 2 different modes of priority queue for the open list in A* search. If we set mode=0, we use $f(s)+g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $f(s)-g(s)$ as priorities to break ties in favor of cells with larger g-values. For the same maze we generate, we run A* search using two different modes of priority queue.  Here is 10 results of 10 different experiment:\\ \\
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|} 
-\hline 
-mode= 0&8147&855&9062&2364&14177&2562&4587&5762&10474&943\\
-\hline  
-mode=1&767&216&949&677&1321&889&1402&1885&1090&461\\
-\hline 
-\end{tabular}\\
-\\
-From the table we can know the number of expanded cells of mode=0 is always bigger than the number of expanded cells of mode=1, which means the  Repeated Forward A* with larger g-value tie break strategy
+We set 2 different modes of priority queue for the open list in A* search.For both modes, we first take f-values as priorities in favor of smaller f-value. When we encounter two cells with the same f-values, if we set mode=0,  we use $g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $-g(s)$ as priorities to break ties in favor of cells with larger g-values. For the same maze we generate, we run A* search using two different modes of priority queue.  Figure \ref{fig:Fig2.S&L} is the results of 50 different experiment:
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale = 0.3]{smaller_g_and_larger_g.png}
+	\caption{Smaller cost and larger cost}
+	\label{fig:Fig2.S&L}
+\end{figure}
+
+The y-axis is the total expanded cells that the agent starts from the start until it reaches the target or finds no way to the target in each experiment, the x-axis is each experiment.
+From the Figure we can know the number of expanded cells of mode=0 is always bigger than the number of expanded cells of mode=1, which means the  Repeated Forward A* with larger g-value tie break strategy
 is much faster than Repeated Forward A* with smaller g-value tie break
 strategy.\\
-The reason is that  if we choose larger g-value to break ties, the agent will choose 
+The reason is that  the agent will choose the point  closer to the target to  expand  if we choose larger g-value to break ties but the agent will choose the point closer to the start to expand if we choose smaller g-value to expand and we will expand many useless cells in this case. Take two states $s_1$, $s_2$ with the same f-value $f=f(s_1)=f(s_2)$ but $g(s_1)<g(s_2)$ as an example. We know $f(s_1)=g(s_1)+h(s_1)$ and $f(s_2)=g(s_2)+h(s_2)$, so $h(s_1)>h(s_2)$. Because $f(s_1)=f(s_2)$ and for mode 0 we choose smaller g-value to break tie, which means we will choose $s_1$ to expand since $g(s_1)<g(s_2)$. Thus, we choose the state with larger h-value to expand, which means we choose to expand the state that is closer to the start states and expand all other states with the same f-value and g-value as $s_1$ before  we can expand the states with the same f-value but with smaller h-value in this case. Similarly, for mode 1 we choose larger g-value to break tie, which means we choose $s_2$ to expand. Because $h(s_1)>h(s_2)$, we choose the point that is closer to the target in this case and don't need to expand any other states that have the same f-value and g-value with $s_2$ before we expand the state with the same f-value but smaller h-value.  Let's consider the following example to see which cells the two modes will choose to expand.
+\begin{figure}[htb]
+	\centering
+	\subfigure[maze]{
+	\label{fig:Fig2.exp}
+	\includegraphics[width=2.6cm, height=2.4cm]{part2_example.png}}
+	\subfigure[smaller]{
+	\label{fig:Fig2.smaller}
+	\includegraphics[scale = 0.2]{smaller_g}}
+	\subfigure[larger]{
+	\label{fig:Fig2.larger}
+	\includegraphics[scale = 0.2]{larger_g}}
+	\caption{result of larger cost and smaller cost. the blue cells is the expanded cells}
+\end{figure}
+\newline 
+For mode 0, see Figure \ref{fig:Fig2.larger}.
+The cells in blue means that the cells have been expanded through the whole search process.\\ 
+For mode 1, see Figure \ref{fig:Fig2.smaller}.\\
+From  these two results, we can see that we expand the cells closer and closer to the target when we choose larger g-value but we expand all the cells when we choose smaller larger g-value. For mode 1(larger g-value to break tie), here is the order of the expansion of the cells $$A_1\to A_2\to A_3\to A_4\to A_5\to B_5\to C_5\to D_5\to E_5$$
+For mode 0(smaller g-value to break tie), here is the order of expansion (we always choose the point that is put into the open list earlier to expand when both f-value and g-value are equal).
+$$A_1$$
+$$\to A_2\to B_1$$
+$$\to A_3\to B_2\to C_1$$
+$$\to A_4\to B_3\to C_2\to D_1$$
+$$\to A_5\to B_4\to C_3\to D_2\to E_1$$
+$$\to B_5\to C_4\to D_3\to E_2$$
+$$\to C_5\to D_4\to E_3$$
+$$\to D_5\to E_4$$
+$$\to E_5$$
+We can see that we  expand cells level by level ordering by the distance to the start point and expand many useless points  when we choose smaller g-value to break tie.
 
 
+%----------------------------------------------------------------------------------------
+
+\section*{part 3}
+The Repeated Forward A* and Repeated Backward A* can share same A* searching algorithm. Therefore, to implement these 2 algorithm, we add a parameter $decode_mode$ to our A* function. When $decode_mode = 1$, the function will swap the position of $start$ and $goal$ and invert the $path$ to do Backward A* searching.
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[scale = 0.3]{forward_backward.png}
+		\caption{Forward and Backward}
+		\label{fig:Fig3.F&B}
+	\end{figure}
+\newline
+Figure \ref{fig:Fig3.F&B} show the result of 50 test on $101\times 101$ maze. According to the  result, Repeated Forward A* expanded much less  nodes than Repeated Backward A*. On average, Repeated Forward A* only expand $9113$ nodes in each test, whereas Repeated Backward A* expand $111250$ nodes. In addition, the variance of Repeated Forward A* is $24296811$, and the variance of Repeated Backward A* is $2758697079$. So, Repeated Forward A* is more stable than Repeated Backward A*.
+\newline
+We believe the reason is that in general the known world is closer to $start$ than $goal$. In each searching, for any unblocked cell $s$, the A* algorithm will expand it if $f(s) < gd(start)$, where $f(s) = g(s) + h(s)$ and $gd(start)$ is the real path cost form $start$ to $goal$. For any two points, in general, the cost of the path between them will be relatively higher, if there are more blocked between them. Since the known world is closer to $start$, the blocked cells are relatively close to $start$. Therefore, in general, there are more cells s with $f(s) < gd(start)$ in backward a* search than in forward a* search. So, Backward A* search will expand more cells.
 
 
 
 %----------------------------------------------------------------------------------------
 
-\section*{3}
-
-
-
-
-
-
-
-%------------------------------------------------
-
-\subsection*{Answer} 
-Let $x_{ij}=1$ if number i is hashed to bucket j. Let $n_j$ denotes the number of elements in bucket j. For bucket j, we know the bubble sort algorithm of sorting this bucket j is $O(n_j^2)$. Thus, the total expected running time is $$E(\sum_{j=1}^n O(n_j^2))=\sum_{j=1}^n O(E(n_j^2))$$
-We know $$E(n_j^2)=\sum_{i=1}^n\sum_{k=1}^nE(x_{ij}x_{kj}=\sum_{i=1}^nE(x_{ij}^2))+2\sum_{i=1}^n\sum_{k=i+1}^nE(x_{ij}x_{kj})=n\times \frac{1}{n}+2\times\binom{n}{2}\frac{1}{n^2}=O(1)$$ Therefore, the expected running time is $$E(\sum_{j=1}^n O(n_j^2))=\sum_{j=1}^n O(E(n_j^2))=n\times O(1)=O(n)$$
-
-%----------------------------------------------------------------------------------------
-
-\section*{4}
+\section*{Part 4}
 
 
 
 %------------------------------------------------
 
 \subsection*{a}
-Let $H=\{constant(a)| 0\leq a\leq m-1\}$ This set of hash functions is uniform because for all x and i($0\leq i \leq m-1$), $Prob(h(x)=i)=\frac{1}{m}$. This set of hash functions is not universal because for all $x\neq y$, $Prob(h(x)=h(y))=1\neq \frac{1}{m}$. Therefore, this set of hash functions is uniform but not universal.
+Let $(i,j)$ denote the position of the state that is in i-th row and j-th col of the maze. Suppose the target point is $(x,y)$. Take any state s $(i,j)$, let $succ(s,a)$ denote the state that taking action a on s. Because we only have 4 choices of actions, so $succ(s,a)$ can be the following 4 different states:
+$$(i+1,j),(i-1,j),(i,j+1),(i,j-1)$$ The manhattan  distance between the goal to each of these 4 states can only have 2 possible results:
+$$|x-i|+|y-j|+1\ and \ |x-i|+|y-j|-1$$ and we know $$|x-i|+|y-j|=h(s)$$ Therefore, $h(succ(s,a)$ can only have two possible value: $h(s)+1$ and  $h(s)-1$
+Thus, $h(s)-1\leq h(succ(s))\leq h(s)+1$. By induction for any two different states s,s' and $c(s,a,s')=k=c(s',a,s)$, we can know $$h(s)-k\leq h(s')\leq h(s)+k$$ Therefore, $$h(s)\leq h(s')+c(s',a,s)$$ and $$h(s')\leq h(s)+c(s,a,s')$$. Thus, the Manhattan distances are consistent in
+gridworlds in which the agent can move only in the four main compass directions.
+
 
 
 
 \subsection*{b}
-Let $H=\{h_{a,b}(x,y)=ax+by\pmod m|0\leq a,b \leq m-1\}$. This set of hash function is universal from class, that is, for input $(x,y)\neq (x',y')$,
- we assume $x\neq x'$, if $ax+by=ax'+by'\pmod m$, we get $a=\frac{b(y'-y)}{x-x'}\pmod m$, if b is fixed, a is fixed according to this equation. Thus, m of hash functions can cause collision of $(x,y)$ and $(x',y')$, and there are $m^2$ hash functions in total. Thus the probability of $Prob(h(x,y)=h(x',y')=\frac{m}{m^2}=\frac{1}{m})$.\\
- This set of hash functions is not strongly universal because if $h(x,y)=ax+by\equiv i\pmod m$ and $h(x',y')=ax'+by'\equiv j\pmod m$, we can get $a=\frac{(i-j)-b(y-y')}{x-x'}\pmod m$. When b is fixed, a is fixed according to this equation.Thus, there are m hash functions satisfying $h(x,y)=i\And h(x',y')=j$. Thus, $Prob(h(x,y)=i \And h(x',y')=j)=\frac{m}{m^2}=\frac{1}{m}\neq \frac{1}{m^2}$. Therefore, this set 
-$H=\{h_{a,b}(x,y)=ax+by\pmod m|0\leq a,b \leq m-1\}$ is universal but not strongly universal.
+We prove that Adaptive A*
+leaves initially consistent h-values consistent even if action costs can increase by induction. The initial heuristic h is supplied by user and is consistent. $h(goal)=0$ is always true because we  never expand the target. And $h(succ(a))\leq h(s)+c(s,a)$. If actions cost increases from $c(s,a)$ to $c'(s,a)$, $h(succ(a))\leq h(s)+c'(s,a)$ is  still true because $c(s,a)\leq c'(s,a)$. Now consider when heuristic updates from h to h'.  Let's consider the following 3 cases:\\
+\*{(i)} both s and succ(s,a) were expanded in last search.\\  Thus,
+$h'(s)=g(goal)-g(s)$ and $h'(succ(s,a))=g(goal)-g(succ(a))$. We can know $g(succ(a))\leq g(s)+c(s,a)$ because the A* search discovers a path from the current state via
+state s to state succ(s, a) of cost $g(s)+c(s,a)$ during
+the expansion of state s. Therefore, $$h'(s)=g(goal)-g(s)\leq g(goal)-g(succ(s,a))+c(s,a)=h'(succ(s,a)+c(s,a)$$
+(ii) s was expanded but $succ(s,a)$ was not.\\
+In this case we can know $h'(s)=g(goal)-g(s)$ and $h'(succ(s,a))=h(succ(s,a))$. And $g(succ(a))\leq g(s)+c(s,a)$ for the same reason in case (i). Also, $g(goal)\leq f(succ(s,a))$ because $succ(s,a)$ is generated but wasn't expanded. Thus, $$h'(s)=g(goal)-g(s)\leq f(succ(s,a))-g(s)$$
+$$=g(succ(s,a))+h(succ(s,a))-g(s)=g(succ(s,a))+h'(succ(s,a))-g(s)$$
+$$\leq g(succ(s,a))+h'(succ(s,a))-g(succ(s,a))+c(s,a)=h'(succ(s,a))$$
+(iii) succ(s,a) was expanded but s wasn't expanded. In this case we can know $h'(s)=h(s)$ and  $h(succ(s,a))\leq h'(succ(s,a))$ because the heuristic of the same state keeps nondecreasing. Thus, we can know $$h'(s)=h(s)\leq h(succ(s,a))+c(s,a)\leq h'(succ(s,a))+c(s,a)$$ 
+From above we can  know Adaptive A*
+leaves initially consistent h-values consistent even if action costs can increase
+
+\section*{Part 5}
+Figure \ref{fig:Fig5.ada} shows result of 50 independent tests for repeated A* search and adaptive A*.
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale = 0.3]{repeated_adaptive.png}
+	\caption{Repeated A* and Adaptive A*}
+	\label{fig:Fig5.ada}
+\end{figure}
+\newline
+From this result figure we can know the total expanded states of these two different search algorithm is nearly equal but adaptive A* search expands a little less states than repeated A* search. I think the reason is that adaptive A* search is more informed, that is, the heuristic of adaptive A* search is closer to the real heuristic.  
+
+
+
 
 %----------------------------------------------------------------------------------------
 
