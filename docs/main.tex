@@ -42,7 +42,7 @@
 
 
 \subsection*{b}
- We keep a closed list and the agent never comes back to the cells in the closed list. Because the grid world is finite, we can put at most finite number of cells  into the closed  list, which means we can only move finite steps to find the target or report that it is impossible to reach the target if we cannot find unblocked neighbors at one cell.\\
+ A* algorithm always expand the cell with smallest f-value. Once a cell is expanded, it will never be put back the open list and be expanded again. Because the grid world is finite, we can put at most finite number of cells into the closed list, which means we can only move finite steps to find the target or report that it is impossible to reach the target.\\
  Suppose there are n unblocked cells in the grid world. For each iteration, the agent can move at most n cell and find at least one blocked cell neighboring one unblocked cell. Since there are at most 4n blocked cells neighboring unblocked cell, the algorithm can only run at most 4n times. Therefore, that the number of moves of the agent until it reaches the target or discovers that this is impossible is $O(n\times 4n)=O(n^2)$.
 
 
@@ -54,7 +54,7 @@
 
 
 %------------------------------------------------
-We set 2 different modes of priority queue for the open list in A* search.For both modes, we first take f-values as priorities in favor of smaller f-value. When we encounter two cells with the same f-values, if we set mode=0,  we use $g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $-g(s)$ as priorities to break ties in favor of cells with larger g-values. For the same maze we generate, we run A* search using two different modes of priority queue.  Figure \ref{fig:Fig2.S&L} is the results of 50 different experiment:
+We set 2 different modes of priority queue for the open list in A* search.For both modes, we first take f-values as priorities in favor of smaller f-value. When we encounter two cells with the same f-values, if we set mode=0,  we use $g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $-g(s)$ as priorities to break ties in favor of cells with larger g-values. In test, we run A* search using two different modes of priority queue. Figure \ref{fig:Fig2.S&L} is the results of 50 tests on $101\times 101$ maze experiment:
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale = 0.3]{smaller_g_and_larger_g.png}
@@ -62,41 +62,50 @@ We set 2 different modes of priority queue for the open list in A* search.For bo
 	\label{fig:Fig2.S&L}
 \end{figure}
 \newline
-The y-axis is the total expanded cells that the agent starts from the start until it reaches the target or finds no way to the target in each experiment, the x-axis is each experiment.
-From the Figure we can know the number of expanded cells of mode=0 is always bigger than the number of expanded cells of mode=1, which means the  Repeated Forward A* with larger g-value tie break strategy
-is much faster than Repeated Forward A* with smaller g-value tie break
-strategy.\\
-The reason is that  the agent will choose the point  closer to the target to  expand  if we choose larger g-value to break ties but the agent will choose the point closer to the start to expand if we choose smaller g-value to expand and we will expand many useless cells in this case. Take two states $s_1$, $s_2$ with the same f-value $f=f(s_1)=f(s_2)$ but $g(s_1)<g(s_2)$ as an example. We know $f(s_1)=g(s_1)+h(s_1)$ and $f(s_2)=g(s_2)+h(s_2)$, so $h(s_1)>h(s_2)$. Because $f(s_1)=f(s_2)$ and for mode 0 we choose smaller g-value to break tie, which means we will choose $s_1$ to expand since $g(s_1)<g(s_2)$. Thus, we choose the state with larger h-value to expand, which means we choose to expand the state that is closer to the start states and expand all other states with the same f-value and g-value as $s_1$ before  we can expand the states with the same f-value but with smaller h-value in this case. Similarly, for mode 1 we choose larger g-value to break tie, which means we choose $s_2$ to expand. Because $h(s_1)>h(s_2)$, we choose the point that is closer to the target in this case and don't need to expand any other states that have the same f-value and g-value with $s_2$ before we expand the state with the same f-value but smaller h-value.  Let's consider the following example to see which cells the two modes will choose to expand.
+According to the result, we can find that the number of expanded cells of mode=0 is always bigger than the number of expanded cells of mode=1, which means the Repeated Forward A* using larger g-value tie breaking strategy is faster than Repeated Forward A* using smaller g-value tie breaking strategy.\\
+The reason is that the agent will choose the point closer to the target to expand if we choose larger g-value to break ties. For two cells $s_1$, $s_2$ with f-value $f(s_1)=f(s_2)$, if $$g(s_1)>g(s_2)$$
+then
+	$$h(s_1) = f(s_1) - g(s_1)
+	\leq f(s_2) - g(s_2)
+	=h(s_2)$$ 
+Therefore, if the A* use larger g-value to break tie, it will choose a cell with smaller h-value, which is closer to the goal. In A* searching, all cells with $f$ smaller than $gd(start)$ will be expanded. So, the breaking ties strategy only affect how many cells with $f = gd(start)$ will be expanded. If A* choose to expand a cell with smaller g-value, it will expand almost all the cells with $f = gd(start)$ before it add $goal$ to the open list.
+%Thus, we choose the state with larger h-value to expand, which means we choose to expand the state that is closer to the start states and expand all other states with the same f-value and g-value as $s_1$ before  we can expand the states with the same f-value but with smaller h-value in this case. Similarly, for mode 1 we choose larger g-value to break tie, which means we choose $s_2$ to expand. Because $h(s_1)>h(s_2)$, we choose the point that is closer to the target in this case and don't need to expand any other states that have the same f-value and g-value with $s_2$ before we expand the state with the same f-value but smaller h-value.  
+Let's consider the following example to see which cells the two modes will choose to expand.
 \begin{figure}[htb]
 	\centering
 	\subfigure[maze]{
 	\label{fig:Fig2.exp}
-	\includegraphics[width=2.6cm, height=2.4cm]{part2_example.png}}
+	\includegraphics[width=3cm, height=2.89cm]{part2_example.png}}
 	\subfigure[smaller]{
 	\label{fig:Fig2.smaller}
 	\includegraphics[scale = 0.2]{smaller_g}}
 	\subfigure[larger]{
 	\label{fig:Fig2.larger}
 	\includegraphics[scale = 0.2]{larger_g}}
-	\caption{result of larger cost and smaller cost. the blue cells is the expanded cells}
+	\caption{result of larger cost and smaller cost}
 \end{figure}
 \newline 
 For mode 0, see Figure \ref{fig:Fig2.larger}.
 The cells in blue means that the cells have been expanded through the whole search process.\\ 
 For mode 1, see Figure \ref{fig:Fig2.smaller}.\\
-From  these two results, we can see that we expand the cells closer and closer to the target when we choose larger g-value but we expand all the cells when we choose smaller larger g-value. For mode 1(larger g-value to break tie), here is the order of the expansion of the cells $$A_1\to A_2\to A_3\to A_4\to A_5\to B_5\to C_5\to D_5\to E_5$$
-For mode 0(smaller g-value to break tie), here is the order of expansion (we always choose the point that is put into the open list earlier to expand when both f-value and g-value are equal).
-$$A_1$$
-$$\to A_2\to B_1$$
-$$\to A_3\to B_2\to C_1$$
-$$\to A_4\to B_3\to C_2\to D_1$$
-$$\to A_5\to B_4\to C_3\to D_2\to E_1$$
-$$\to B_5\to C_4\to D_3\to E_2$$
-$$\to C_5\to D_4\to E_3$$
-$$\to D_5\to E_4$$
-$$\to E_5$$
-We can see that we  expand cells level by level ordering by the distance to the start point and expand many useless points  when we choose smaller g-value to break tie.
-
+From these two results, we can see that we expand the cells closer and closer to the target when we choose larger g-value but we expand all the cells when we choose smaller larger g-value. 
+\newline 
+For mode 0(smaller g-value to break tie), here is the order of expansion,
+\newline(we always choose the point that is put into the open list earlier to expand when both f-value and g-value are equal).
+$$A1$$
+$$\to A2\to B1$$
+$$\to A3\to B2\to C1$$
+$$\to A4\to B3\to C2\to D1$$
+$$\to A5\to B4\to C3\to D2\to E1$$
+$$\to B5\to C4\to D3\to E2$$
+$$\to C5\to D4\to E3$$
+$$\to D5$$
+All the cells in this maze have same f-value. The level from high to low correspond the g-value from large to small.
+\newline
+For mode 0, we can see that the algorithm first expand all cells with smallest g-values, and then the second smallest and so on. Before it reach the goal, the algorithm have expand almost all cells in maze. That is far inefficient than mode 1. 
+Here is the order of the expansion of the cells for mode 1,
+$$A1\to A2\to A3\to A4\to A5\to B5\to C5\to D5$$
+We can see that the algorithm only expand 1 cell in each level. The number of total expended cells is less than mode0.
 
 %----------------------------------------------------------------------------------------
 
@@ -197,7 +206,10 @@ From this result figure we can know the total expanded states of these two diffe
 
 
 %----------------------------------------------------------------------------------------
-
+\section*{part 6}
+Take the experiment question in part 2 to do a statistical hypothesis test.
+Assume that performance differences between two search algorithms  are  due to sampling noise(null hypothesis). The probability of one algorithm performs better than another due to sampling noise is 50\%. Set the significance level of the  test $\alpha=0.01$. The probability of getting the result in part 2 that the performance of breaking tie with larger g-value is better than the performance of breaking tie with smaller g-value shows up for 50 times in 50 experiments is $p=0.5^{50}<\alpha$,which is in the region of rejection, so we need to reject the null hypothesis. Therefore, performance differences between two search algorithms are systematic
+in nature but not due to sampling noise.
 
 
 \end{document}

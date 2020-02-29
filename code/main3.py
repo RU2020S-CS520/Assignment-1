@@ -19,7 +19,7 @@ if __name__ == '__main__':
         expanded1=0
         expanded2=0
         while maze.start[0] != maze.end[0] or maze.start[1] != maze.end[1]:
-            result = search.astar(maze.get_map(), maze.start, maze.end)
+            result = search.astar(maze.get_map(), maze.start, maze.end, priority=0)
 
             path = result[0]
             if path[-1] == maze.start:
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         #maze2.visualize()
         while maze2.start[0] != maze2.end[0] or maze2.start[1] != maze2.end[1]:
 
-            result2 = search.astar(maze2.get_map(), maze2.start, maze2.end)
+            result2 = search.astar(maze2.get_map(), maze2.start, maze2.end, priority=1)
             path2 = result2[0]
             if path2[-1] == maze2.start:
                 print("no path")

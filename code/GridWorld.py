@@ -25,13 +25,9 @@ class Maze:
         self.map = np.zeros((num_rows, num_cols))
 
     def test(self):
-        self.start = (4, 2)
+        self.map = np.zeros((5, 5))
+        self.start = (0, 0)
         self.end = (4, 4)
-        self.map = np.zeros((self.num_rows, self.num_cols))
-        self.map[4, 3] = 1
-        self.map[3, 2] = 1
-        self.map[2, 2] = 1
-        self.map[1, 2] = 1
         self.map[self.start] = 0
         self.map[self.end] = 0
         self.visited_map[self.start] = 1

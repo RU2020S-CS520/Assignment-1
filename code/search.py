@@ -87,7 +87,7 @@ def astar(maze, start, goal, decode_mode=0, priority=1):
     for node in closed_list:
         heuristics[node] = max(cost[goal] - cost[node], manhattan_cost(goal, node))
 
-    return path, heuristics, expanded
+    return path, heuristics, expanded, closed_list
 
 
 def ada_astar(maze, start, goal, heuristics, decode_mode=0, priority=1):
@@ -138,7 +138,7 @@ def ada_astar(maze, start, goal, heuristics, decode_mode=0, priority=1):
     for node in closed_list:
         heuristics[node] = max(cost[goal] - cost[node], heuristics[node])
 
-    return path, heuristics, expanded
+    return path, heuristics, expanded, closed_list
 
 
 if __name__ == '__main__':

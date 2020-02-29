@@ -7,7 +7,7 @@ if __name__ == '__main__':
     expanded2_all = []
     total1 = 0
     total2 = 0
-    for i in range(20):
+    for i in range(50):
         times1 = 0
         times2 = 0
         maze = GridWorld.Maze(101, 101)
