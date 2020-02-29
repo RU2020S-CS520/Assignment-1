@@ -205,7 +205,7 @@ $$h^i(a)=h^{i-1}(s)\leq h^{i-1}(b)+c^{i-1}(a,b)\leq h^{i}(b)+c^{i}(a,b)$$
 Therefore, we prove that Adaptive A* leaves initially consistent h-values consistent 
 
 \section*{Part 5}
-Figure \ref{fig:Fig5.ada} shows result of 50 independent tests for repeated A* search and adaptive A*.
+Figure \ref{fig:Fig5.ada} shows the result of 50 independent tests for repeated A* search and adaptive A*.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale = 0.3]{repeated_adaptive.png}
@@ -213,10 +213,7 @@ Figure \ref{fig:Fig5.ada} shows result of 50 independent tests for repeated A* s
 	\label{fig:Fig5.ada}
 \end{figure}
 \newline
-From this result figure we can know the total expanded states of these two different search algorithm is nearly equal but adaptive A* search expands a little less states than repeated A* search. I think the reason is that adaptive A* search is more informed, that is, the heuristic of adaptive A* search is closer to the real heuristic.  
-
-
-
+From this result figure, we can find the total expanded states of these two different searching algorithm is nearly equal but adaptive A* search expands a little less states than repeated A* search. The reason is that adaptive A* search use $h_{new}(s) = g(goal) - g(s)$ to update the h-value of all expanded cell $s$. Since we know that $gd(s)\geq h_{new}\geq h(s)$, the $h_{new}$ is more informed than the Manhattan distance $h(s)$. Therefore, Adaptive A* searching will expand less wrong cells (the cells out of the path) to find the path from $start$ to $goal$. 
 
 %----------------------------------------------------------------------------------------
 \section*{part 6}
