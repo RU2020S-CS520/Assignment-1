@@ -5,7 +5,6 @@
 \usepackage{algorithmicx}
 \usepackage{graphicx}
 \usepackage{subfigure}
-\usepackage{natbib}
 \usepackage[colorlinks]{hyperref}
 
 \graphicspath{{plots/}}
@@ -44,7 +43,7 @@
 
 \subsection*{b}
  We keep a closed list and the agent never comes back to the cells in the closed list. Because the grid world is finite, we can put at most finite number of cells  into the closed  list, which means we can only move finite steps to find the target or report that it is impossible to reach the target if we cannot find unblocked neighbors at one cell.\\
- Suppose there are n unblocked  cells in the grid world. According to the repeated A* algorithm this project use, the length of the path we compute every time is at most n. And we can compute path at most for n times, which means we  need to compute path after each move. Therefore, that the number of moves of the agent until it reaches the target or discovers that this is impossible is $O(n\times n)=O(n^2)$.
+ Suppose there are n unblocked cells in the grid world. For each iteration, the agent can move at most n cell and find at least one blocked cell neighboring one unblocked cell. Since there are at most 4n blocked cells neighboring unblocked cell, the algorithm can only run at most 4n times. Therefore, that the number of moves of the agent until it reaches the target or discovers that this is impossible is $O(n\times 4n)=O(n^2)$.
 
 
 
@@ -56,14 +55,13 @@
 
 %------------------------------------------------
 We set 2 different modes of priority queue for the open list in A* search.For both modes, we first take f-values as priorities in favor of smaller f-value. When we encounter two cells with the same f-values, if we set mode=0,  we use $g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $-g(s)$ as priorities to break ties in favor of cells with larger g-values. For the same maze we generate, we run A* search using two different modes of priority queue.  Figure \ref{fig:Fig2.S&L} is the results of 50 different experiment:
-
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale = 0.3]{smaller_g_and_larger_g.png}
 	\caption{Smaller cost and larger cost}
 	\label{fig:Fig2.S&L}
 \end{figure}
-
+\newline
 The y-axis is the total expanded cells that the agent starts from the start until it reaches the target or finds no way to the target in each experiment, the x-axis is each experiment.
 From the Figure we can know the number of expanded cells of mode=0 is always bigger than the number of expanded cells of mode=1, which means the  Repeated Forward A* with larger g-value tie break strategy
 is much faster than Repeated Forward A* with smaller g-value tie break
@@ -113,7 +111,7 @@ The Repeated Forward A* and Repeated Backward A* can share same A* searching alg
 \newline
 Figure \ref{fig:Fig3.F&B} show the result of 50 test on $101\times 101$ maze. According to the  result, Repeated Forward A* expanded much less  nodes than Repeated Backward A*. On average, Repeated Forward A* only expand $9113$ nodes in each test, whereas Repeated Backward A* expand $111250$ nodes. In addition, the variance of Repeated Forward A* is $24296811$, and the variance of Repeated Backward A* is $2758697079$. So, Repeated Forward A* is more stable than Repeated Backward A*.
 \newline
-We believe the reason is that in general the known world is closer to $start$ than $goal$. In each searching, for any unblocked cell $s$, the A* algorithm will expand it if $f(s) < gd(start)$, where $f(s) = g(s) + h(s)$ and $gd(start)$ is the real path cost form $start$ to $goal$. For any two points, in general, the cost of the path between them will be relatively higher, if there are more blocked between them. Since the known world is closer to $start$, the blocked cells are relatively close to $start$. Therefore, in general, there are more cells s with $f(s) < gd(start)$ in backward a* search than in forward a* search. So, Backward A* search will expand more cells.
+We believe the reason is that the known world is closer to $start$ than $goal$. In general, for any two points, if there are more blocked cells around one point, the cost of the path between them will be expectedly higher. Since the known world is closer to $start$, the blocked cells are relatively close to $start$. Therefore, for any two cells $a$ and $b$ respectively in forward and backward search, if $h(a) = h(b)$, there are higher probability that $g(a) > g(b)$. So, in general, there are more cells $s$ with $f(s) < gd(start)$ in backward a* search than in forward a* search, and Backward A* search will expand more cells.
 
 
 
@@ -125,30 +123,64 @@ We believe the reason is that in general the known world is closer to $start$ th
 
 %------------------------------------------------
 
-\subsection*{a}
-Let $(i,j)$ denote the position of the state that is in i-th row and j-th col of the maze. Suppose the target point is $(x,y)$. Take any state s $(i,j)$, let $succ(s,a)$ denote the state that taking action a on s. Because we only have 4 choices of actions, so $succ(s,a)$ can be the following 4 different states:
-$$(i+1,j),(i-1,j),(i,j+1),(i,j-1)$$ The manhattan  distance between the goal to each of these 4 states can only have 2 possible results:
-$$|x-i|+|y-j|+1\ and \ |x-i|+|y-j|-1$$ and we know $$|x-i|+|y-j|=h(s)$$ Therefore, $h(succ(s,a)$ can only have two possible value: $h(s)+1$ and  $h(s)-1$
-Thus, $h(s)-1\leq h(succ(s))\leq h(s)+1$. By induction for any two different states s,s' and $c(s,a,s')=k=c(s',a,s)$, we can know $$h(s)-k\leq h(s')\leq h(s)+k$$ Therefore, $$h(s)\leq h(s')+c(s',a,s)$$ and $$h(s')\leq h(s)+c(s,a,s')$$. Thus, the Manhattan distances are consistent in
-gridworlds in which the agent can move only in the four main compass directions.
+\subsection*{Proving Manhattan distances are consistent:}
 
+According to triangle inequality, for any three point $a, b$ and $c$, we have
+	$$h(a, c) \leq h(a, b) + h(b, c)$$
+$h(a, c)$ is the Manhattan distance between $a$ and $c$.
+\newline
+Then, since the agent can move only in the four main compass directions, the shortest distant between any two points is their Manhattan distances. So,
+	$$h(a, b) + h(b, c)\leq c(a, b) + h(b, c)$$
+$c(a, b)$ is the real distance between $a$ and $b$. So, any two point $a$ and $b$ satisfy
+	$$h(a, c) \leq c(a, b) + h(b, c)$$
+Therefore, Manhattan distance are consistent.
 
+\subsection*{Proving Adaptive A* is constances}
 
+Proving by induction.
+\newline
+Since the initially h-values are consistent, we assume the h-values in first $i-1$ searching are consistent, and need to prove the h-values in $i^{th}$ searching are consistent. Separating the situation of any two cell $a$ and $b$ into three cases and prove
+	$$h^i(a)\leq c^i(a, b) + h^i(b)$$
+\begin{enumerate}
+	\item Both $a$ and $b$ were expanded in ${i-1}^{th}$ search.
+\newline Because both $a$ and $b$ were expanded, their h-values in $i^{th}$ search are
+$$h^i(a)=g^{i-1}(goal)-g^{i-1}(a) 
+\text{ and }
+h^i(b)=g^{i-1}(goal)-g^{i-1}(b)$$
+According to triangle inequality, we know
+$$g^{i-1}(b)\leq g^{i-1}(a)+c^{i-1}(a,b)$$
+Therefore, because the action cost is nondecreasing
+\begin{equation}\nonumber
+\begin{aligned}
+h^i(a)&=g^{i-1}(goal)-g^{i-1}(a)\\ &\leq g^{i-1}(goal)-g^{i-1}(a)+c^{i}(a,b)\\&\leq h^{i}(b)+c^i(a,b)
+\end{aligned}
+\end{equation}
 
-\subsection*{b}
-We prove that Adaptive A*
-leaves initially consistent h-values consistent even if action costs can increase by induction. The initial heuristic h is supplied by user and is consistent. $h(goal)=0$ is always true because we  never expand the target. And $h(succ(a))\leq h(s)+c(s,a)$. If actions cost increases from $c(s,a)$ to $c'(s,a)$, $h(succ(a))\leq h(s)+c'(s,a)$ is  still true because $c(s,a)\leq c'(s,a)$. Now consider when heuristic updates from h to h'.  Let's consider the following 3 cases:\\
-\*{(i)} both s and succ(s,a) were expanded in last search.\\  Thus,
-$h'(s)=g(goal)-g(s)$ and $h'(succ(s,a))=g(goal)-g(succ(a))$. We can know $g(succ(a))\leq g(s)+c(s,a)$ because the A* search discovers a path from the current state via
-state s to state succ(s, a) of cost $g(s)+c(s,a)$ during
-the expansion of state s. Therefore, $$h'(s)=g(goal)-g(s)\leq g(goal)-g(succ(s,a))+c(s,a)=h'(succ(s,a)+c(s,a)$$
-(ii) s was expanded but $succ(s,a)$ was not.\\
-In this case we can know $h'(s)=g(goal)-g(s)$ and $h'(succ(s,a))=h(succ(s,a))$. And $g(succ(a))\leq g(s)+c(s,a)$ for the same reason in case (i). Also, $g(goal)\leq f(succ(s,a))$ because $succ(s,a)$ is generated but wasn't expanded. Thus, $$h'(s)=g(goal)-g(s)\leq f(succ(s,a))-g(s)$$
-$$=g(succ(s,a))+h(succ(s,a))-g(s)=g(succ(s,a))+h'(succ(s,a))-g(s)$$
-$$\leq g(succ(s,a))+h'(succ(s,a))-g(succ(s,a))+c(s,a)=h'(succ(s,a))$$
-(iii) succ(s,a) was expanded but s wasn't expanded. In this case we can know $h'(s)=h(s)$ and  $h(succ(s,a))\leq h'(succ(s,a))$ because the heuristic of the same state keeps nondecreasing. Thus, we can know $$h'(s)=h(s)\leq h(succ(s,a))+c(s,a)\leq h'(succ(s,a))+c(s,a)$$ 
-From above we can  know Adaptive A*
-leaves initially consistent h-values consistent even if action costs can increase
+\item $a$ was expanded but $b$ was not.\\
+Because $a$ was expanded but $b$ wasn't, their h-values in $i^{th}$ search are
+$$h^i(a)=g^{i-1}(goal)-g^{i-1}(a) 
+\text{ and }
+h^i(b)=h^{i-1}(b)$$
+According to triangle inequality, we know
+$$g^{i-1}(b)\leq g^{i-1}(a)+c^{i-1}(a,b)$$
+Because $b$ wasn't expanded, according to the expanding rule of A*, we have
+$$g^{i-1}(goal)\leq g^{i-1}(b) + h^{i-1}(b)$$
+Therefore,
+\begin{equation}\nonumber
+\begin{aligned}
+h^i(a)&=g^{i-1}(goal)-g^{i-1}(a)\\ &\leq g^{i-1}(b) + h^{i-1}(b) - g^{i-1}(a)\\&\leq h^{i}(b)+c^i(a,b)
+\end{aligned}
+\end{equation}
+
+\item $b$ was expanded but $a$ wasn't expanded.
+\newline In this case, 
+$$h^i(a)=h^{i-1}(a) 
+\text{ and }
+h^i(b)=g^{i-1}(goal)-g^{i-1}(b)$$
+Because the heuristic action cost keeps nondecreasing, we can know 
+$$h^i(a)=h^{i-1}(s)\leq h^{i-1}(b)+c^{i-1}(a,b)\leq h^{i}(b)+c^{i}(a,b)$$ 
+\end{enumerate}
+Therefore, we prove that Adaptive A* leaves initially consistent h-values consistent 
 
 \section*{Part 5}
 Figure \ref{fig:Fig5.ada} shows result of 50 independent tests for repeated A* search and adaptive A*.
