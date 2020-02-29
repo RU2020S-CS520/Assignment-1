@@ -42,8 +42,21 @@
 
 
 \subsection*{b}
- A* algorithm always expand the cell with smallest f-value. Once a cell is expanded, it will never be put back the open list and be expanded again. Because the grid world is finite, we can put at most finite number of cells into the closed list, which means we can only move finite steps to find the target or report that it is impossible to reach the target.\\
- Suppose there are n unblocked cells in the grid world. For each iteration, the agent can move at most n cell and find at least one blocked cell neighboring one unblocked cell. Since there are at most 4n blocked cells neighboring unblocked cell, the algorithm can only run at most 4n times. Therefore, that the number of moves of the agent until it reaches the target or discovers that this is impossible is $O(n\times 4n)=O(n^2)$.
+ A* algorithm always expand the cell with smallest f-value. Once a cell is expanded, it will never be put back the open list and be expanded again. This can be proved by contradiction:
+ \newline
+ Suppose cell $a$ was expanded. Cell $b$ is expanding at current iteration, and $b$ is adding $a$ to open list.
+ \newline
+ Because $b$ is adding $a$ to open list, we have
+ $$g(a) > g(b) + c(b, a)$$
+ Also, because $a$ was expanded before $b$,
+ $$f(a) = g(a) + h(a) < f(b) = g(b) + h(b)$$
+ In addition, since heuristic is consistent,
+ $$g(a) + h(a) < g(b) + h(b) < h(a) + g(b) + c(a, b)$$
+ $$g(a) < g(b) + c(a, b)$$
+ This is a contradiction. Therefore, if $a$ was expanded, it will never be added to open list. And we can say $a$ is put into a closed list
+ \newline
+ So, because the grid world is finite, we can put at most finite number of cells into closed list, which means in searching, we can only find the target or report that it is impossible to reach the target.\\
+ For moving part, suppose there are n unblocked cells in the grid world. For each iteration, the agent can move at most n cell and find at least one blocked cell neighboring one unblocked cell. Since there are at most 4n blocked cells neighboring unblocked cell, the algorithm can only run at most 4n times. Therefore, that the number of moves of the agent until it reaches the target or discovers that this is impossible is $O(n\times 4n)=O(n^2)$.
 
 
 
@@ -208,8 +221,8 @@ From this result figure we can know the total expanded states of these two diffe
 %----------------------------------------------------------------------------------------
 \section*{part 6}
 Take the experiment question in part 2 to do a statistical hypothesis test.
-Assume that performance differences between two search algorithms  are  due to sampling noise(null hypothesis). The probability of one algorithm performs better than another due to sampling noise is 50\%. Set the significance level of the  test $\alpha=0.01$. The probability of getting the result in part 2 that the performance of breaking tie with larger g-value is better than the performance of breaking tie with smaller g-value shows up for 50 times in 50 experiments is $p=0.5^{50}<\alpha$,which is in the region of rejection, so we need to reject the null hypothesis. Therefore, performance differences between two search algorithms are systematic
-in nature but not due to sampling noise.
+\newline
+Assume that performance differences between two search algorithms  are  due to sampling noise(null hypothesis). The probability of one algorithm performs better than another due to sampling noise is 50\%. Set the significance level of the test $\alpha=0.01$. The probability of getting the result in part 2 that the performance of breaking tie with larger g-value is better than the performance of breaking tie with smaller g-value shows up for 50 times in 50 experiments is $p=0.5^{50}<\alpha$, which is in the region of rejection, so we need to reject the null hypothesis. Therefore, performance differences between two search algorithms are systematic in nature but not due to sampling noise.
 
 
 \end{document}
