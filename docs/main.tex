@@ -70,7 +70,7 @@
 
 
 %------------------------------------------------
-We set 2 different modes of priority queue for the open list in A* search.For both modes, we first take f-values as priorities in favor of smaller f-value. When we encounter two cells with the same f-values, if we set mode=0,  we use $g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $-g(s)$ as priorities to break ties in favor of cells with larger g-values. In test, we run A* search using two different modes of priority queue. Figure \ref{fig:Fig2.S&L} is the results of 50 tests on $101\times 101$ maze experiment:
+We set 2 different modes of priority queue for the open list in A* search.For both modes, we first take f-values as priorities in favor of smaller f-value. When we encounter two cells with the same f-values, if we set mode=0,  we use $g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $-g(s)$ as priorities to break ties in favor of cells with larger g-values. In test, we run A* search using two different modes of priority queue. Fig. \ref{fig:Fig2.S&L} is the results of 50 tests on $101\times 101$ maze experiment:
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale = 0.3]{smaller_g_and_larger_g.png}
@@ -101,9 +101,9 @@ Let's consider the following example to see which cells the two modes will choos
 	\caption{result of larger cost and smaller cost}
 \end{figure}
 \newline 
-For mode 0, see Figure \ref{fig:Fig2.larger}.
+For mode 0, see Fig. \ref{fig:Fig2.larger}.
 The cells in blue means that the cells have been expanded through the whole search process.\\ 
-For mode 1, see Figure \ref{fig:Fig2.smaller}.\\
+For mode 1, see Fig. \ref{fig:Fig2.smaller}.\\
 From these two results, we can see that we expand the cells closer and closer to the target when we choose larger g-value but we expand all the cells when we choose smaller larger g-value. 
 \newline 
 For mode 0(smaller g-value to break tie), here is the order of expansion,
@@ -134,7 +134,7 @@ The Repeated Forward A* and Repeated Backward A* can share same A* searching alg
 		\label{fig:Fig3.F&B}
 	\end{figure}
 \newline
-Figure \ref{fig:Fig3.F&B} show the result of 50 test on $101\times 101$ maze. According to the  result, Repeated Forward A* expanded much less  nodes than Repeated Backward A*. On average, Repeated Forward A* only expand $9113$ nodes in each test, whereas Repeated Backward A* expand $111250$ nodes. In addition, the variance of Repeated Forward A* is $24296811$, and the variance of Repeated Backward A* is $2758697079$. So, Repeated Forward A* is more stable than Repeated Backward A*.
+Fig. \ref{fig:Fig3.F&B} show the result of 50 test on $101\times 101$ maze. According to the  result, Repeated Forward A* expanded much less  nodes than Repeated Backward A*. On average, Repeated Forward A* only expand $9113$ nodes in each test, whereas Repeated Backward A* expand $111250$ nodes. In addition, the variance of Repeated Forward A* is $24296811$, and the variance of Repeated Backward A* is $2758697079$. So, Repeated Forward A* is more stable than Repeated Backward A*.
 \newline
 We believe the reason is that the known world is closer to $start$ than $goal$. In general, for any two points, if there are more blocked cells around one point, the cost of the path between them will be expectedly higher. Since the known world is closer to $start$, the blocked cells are relatively close to $start$. Therefore, for any two cells $a$ and $b$ respectively in forward and backward search, if $h(a) = h(b)$, there are higher probability that $g(a) > g(b)$. So, in general, there are more cells $s$ with $f(s) < gd(start)$ in backward a* search than in forward a* search, and Backward A* search will expand more cells.
 
@@ -208,7 +208,7 @@ $$h^i(a)=h^{i-1}(s)\leq h^{i-1}(b)+c^{i-1}(a,b)\leq h^{i}(b)+c^{i}(a,b)$$
 Therefore, we prove that Adaptive A* leaves initially consistent h-values consistent 
 
 \section*{Part 5}
-Figure \ref{fig:Fig5.ada} shows the result of 50 independent tests for repeated A* search and adaptive A*.
+Fig. \ref{fig:Fig5.ada} shows the result of 50 independent tests for repeated A* search and adaptive A*.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale = 0.3]{repeated_adaptive.png}
