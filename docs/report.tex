@@ -30,7 +30,7 @@
 %	ASSIGNMENT CONTENT
 %----------------------------------------------------------------------------------------
 \section*{Part 0}
-In my code I create a Maze class containing cells. We can create a Maze object maze by specifying the size of maze and call maze.generate\_maze() function,  which is implemented by depth first search, to generate one maze with the size we set. And we can call maze.visualize() function to visualize the maze we create. To create 50 grid world of size $101\times 101$ we need a loop to create maze for 50 times and  set the size $101\times 101$.
+We implemented a class $Maze$ to generate and visualize the maze. This class is initialized with two integer number which is the number of rows and columns of the maze. In class $Maze$, we implemented a function $generate\_maze()$. This function use depth first search approach to mark the blocked and unblocked cells and set $start = (1, 1)$ and $goal = (row - 1, col - 1)$. To visualize the maze, we implemented a function $maze.visualize()$ using the third-party library $matplotlib$ to plot the maze. We use a loop to generate the maze 50 times. All the mazes are initialed with size $101\times 101$ 
 
 
 
