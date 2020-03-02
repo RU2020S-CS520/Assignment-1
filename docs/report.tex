@@ -22,6 +22,15 @@
 \evensidemargin 0.0in \topmargin -0.55in
 \addtolength{\textwidth}{2.5mm} \addtolength{\columnsep}{2mm}
 
+\hypersetup{
+     colorlinks = true,
+     linkcolor = blue,
+     anchorcolor = blue,
+     citecolor = blue,
+     filecolor = blue,
+     urlcolor = blue
+}
+
 \begin{document}
 
 \maketitle % Output the assignment title, created automatically using the information in the custom commands above
@@ -30,7 +39,7 @@
 %	ASSIGNMENT CONTENT
 %----------------------------------------------------------------------------------------
 \section*{Part 0}
-We implemented a class $Maze$ to generate and visualize the maze. This class is initialized with two integer number which is the number of rows and columns of the maze. In class $Maze$, we implemented a function $generate\_maze()$. This function use depth first search approach to mark the blocked and unblocked cells and set $start = (1, 1)$ and $goal = (row - 1, col - 1)$. To visualize the maze, we implemented a function $maze.visualize()$ using the third-party library $matplotlib$ to plot the maze. We use a loop to generate the maze 50 times. All the mazes are initialed with size $101\times 101$ 
+We implemented a class $Maze$ to generate and visualize the maze. This class is initialized with two integer number which is the number of rows and columns of the maze. In class $Maze$, we implemented a function $generate\_maze()$. This function use depth first search approach to mark the blocked and unblocked cells and set $start = (1, 1)$ and $goal = (row - 1, col - 1)$. To visualize the maze, we implemented a function $maze.visualize()$ using the third-party library $matplotlib$ to plot the maze. We use a loop to generate the maze 50 times. All the mazes are initialed with size $101\times 101$.
 
 
 
@@ -60,10 +69,10 @@ We implemented a class $Maze$ to generate and visualize the maze. This class is 
  In addition, since heuristic is consistent,
  $$g(a) + h(a) < g(b) + h(b) < h(a) + g(b) + c(a, b)$$
  $$g(a) < g(b) + c(a, b)$$
- This is a contradiction. Therefore, if $a$ was expanded, it will never be added to open list. And we can say $a$ is put into a closed list
+ This is a contradiction. Therefore, if $a$ was expanded, it will never be added to open list. And we can say $a$ is put into a closed list.
  \newline
- So, because the grid world is finite, we can put at most finite number of cells into closed list, which means in searching, we can only find the target or report that it is impossible to reach the target.\\
- For moving part, suppose there are n unblocked cells in the grid world. For each iteration, the agent can move at most n cell and find at least one blocked cell neighboring one unblocked cell. Since there are at most 4n blocked cells neighboring unblocked cell, the algorithm can only run at most 4n times. Therefore, that the number of moves of the agent until it reaches the target or discovers that this is impossible is $O(n\times 4n)=O(n^2)$.
+ So, because the grid world is finite, we can put at most finite number of cells into closed list. This means in searching, we can only find the target or report that it is impossible to reach the target.\\
+ For moving part, suppose there are n unblocked cells in the grid world. For each iteration, the agent can move at most n cell and find at least one blocked cell neighboring one unblocked cell. Since there are at most 4n blocked cells neighboring unblocked cell, the algorithm can only run at most 4n times. Therefore, the number of moves of the agent until it reaches the target or discovers that this is impossible is $O(n\times 4n)=O(n^2)$.
 
 
 
@@ -74,11 +83,11 @@ We implemented a class $Maze$ to generate and visualize the maze. This class is 
 
 
 %------------------------------------------------
-We set 2 different modes of priority queue for the open list in A* search.For both modes, we first take f-values as priorities in favor of smaller f-value. When we encounter two cells with the same f-values, if we set mode=0,  we use $g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $-g(s)$ as priorities to break ties in favor of cells with larger g-values. In test, we run A* search using two different modes of priority queue. Fig. \ref{fig:Fig2.S&L} is the results of 50 tests on $101\times 101$ maze experiment:
+We set 2 different modes of priority queue for the open list in A* search. For both modes, we first take f-values as priorities in favor of smaller f-value. When we encounter two cells with the same f-values, if we set mode=0,  we use $g(s)$ as priorities to break ties in favor of cells with smaller g-values. If we set mode=1, we use $-g(s)$ as priorities to break ties in favor of cells with larger g-values. In test, we run A* search using two different modes of priority queue. Fig. \ref{fig:Fig2.S&L} is the results of 50 tests on $101\times 101$ maze experiment:
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale = 0.3]{smaller_g_and_larger_g.png}
-	\caption{Smaller cost and larger cost}
+	\caption{Smaller g-value and larger g-value}
 	\label{fig:Fig2.S&L}
 \end{figure}
 \newline
@@ -102,7 +111,7 @@ Let's consider the following example to see which cells the two modes will choos
 	\subfigure[larger]{
 	\label{fig:Fig2.larger}
 	\includegraphics[scale = 0.2]{larger_g}}
-	\caption{result of larger cost and smaller cost}
+	\caption{Expanded map}
 \end{figure}
 \newline 
 For mode 0, see Fig. \ref{fig:Fig2.larger}.
@@ -130,17 +139,17 @@ We can see that the algorithm only expand 1 cell in each level. The number of to
 %----------------------------------------------------------------------------------------
 
 \section*{part 3}
-The Repeated Forward A* and Repeated Backward A* can share same A* searching algorithm. Therefore, to implement these 2 algorithm, we add a parameter $decode_mode$ to our A* function. When $decode_mode = 1$, the function will swap the position of $start$ and $goal$ and invert the $path$ to do Backward A* searching.
+The Repeated Forward A* and Repeated Backward A* can share same A* searching algorithm. Therefore, to implement these 2 algorithm, we add a parameter $decode_{mode}$ to our A* function. When $decode_{mode} = 1$, the function will swap the position of $start$ and $goal$ and invert the $path$ to do Backward A* searching.
 	\begin{figure}[htb]
 		\centering
 		\includegraphics[scale = 0.3]{forward_backward.png}
-		\caption{Forward and Backward}
+		\caption{Forward A* search and Backward A* search}
 		\label{fig:Fig3.F&B}
 	\end{figure}
 \newline
-Fig. \ref{fig:Fig3.F&B} show the result of 50 test on $101\times 101$ maze. According to the  result, Repeated Forward A* expanded much less  nodes than Repeated Backward A*. On average, Repeated Forward A* only expand $9113$ nodes in each test, whereas Repeated Backward A* expand $111250$ nodes. In addition, the variance of Repeated Forward A* is $24296811$, and the variance of Repeated Backward A* is $2758697079$. So, Repeated Forward A* is more stable than Repeated Backward A*.
+Fig. \ref{fig:Fig3.F&B} shows the result of 50 test on $101\times 101$ maze. According to the  result, Repeated Forward A* expanded much less  nodes than Repeated Backward A*. On average, Repeated Forward A* only expand $9113$ nodes in each test, whereas Repeated Backward A* expand $111250$ nodes. In addition, the variance of Repeated Forward A* is $24296811$, and the variance of Repeated Backward A* is $2758697079$. So, Repeated Forward A* is also more stable than Repeated Backward A*.
 \newline
-We believe the reason is that the known world is closer to $start$ than $goal$. In general, for any two points, if there are more blocked cells around one point, the cost of the path between them will be expectedly higher. Since the known world is closer to $start$, the blocked cells are relatively close to $start$. Therefore, for any two cells $a$ and $b$ respectively in forward and backward search, if $h(a) = h(b)$, there are higher probability that $g(a) > g(b)$. So, in general, there are more cells $s$ with $f(s) < gd(start)$ in backward a* search than in forward a* search, and Backward A* search will expand more cells.
+The reason is that the known world is closer to $start$ than $goal$. In general, for any two points, if there are more blocked cells around one point, the cost of the path between them will be expectedly higher. Since the known world is closer to $start$, the blocked cells are relatively close to $start$. Therefore, for any two cells $a$ and $b$ respectively in forward and backward search, if $h(a) = h(b)$, there are higher probability that $g(a) > g(b)$. So, in general, there are more cells $s$ with $f(s) < gd(start)$ in backward a* search than in forward a* search. Since all cells with $f(s) < gd(start)$ will be expanded in A* search, Backward A* search will expand more cells.
 
 
 
